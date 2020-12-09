@@ -530,7 +530,7 @@ int main()
 		//initialize time variables;
 		Time elapse[15];
 		elapse[0] = clock[0].getElapsedTime();
-		elapse[1] = clock[1].getElapsedTime();
+		elapse[1] = clock[1].getElapsedTime(); 
 		elapse[2] = clock[2].getElapsedTime();
 		elapse[3] = clock[3].getElapsedTime();
 		elapse[4] = clock[4].getElapsedTime();
