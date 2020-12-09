@@ -9,6 +9,7 @@ class hitbox
 public:
 	hitbox(Vector2f* position, Vector2f size);
 	Vector2f position;
+	RectangleShape box;
 
 	void update();
 	void draw(RenderWindow& window);
@@ -20,6 +21,4 @@ public:
 	collider getCollider() { return collider(box); }
 
 private:
-	RectangleShape box;
-	Vector2f size;
 };

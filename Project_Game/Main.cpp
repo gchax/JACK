@@ -19,6 +19,7 @@ int main()
 	RenderWindow window(VideoMode(viewWidght, viewHeight), "Jack!", Style::Close | Style::Fullscreen);
 	View view(Vector2f(0.0f, 0.0f), Vector2f(viewWidght, viewHeight));
 	window.setFramerateLimit(framerateLimit);
+	Event event;
 	srand(time(NULL));
 
 
@@ -31,7 +32,6 @@ int main()
 	bool isPause = false;
 	bool isPlayerDead = false;
 	bool isUnlocked = false;
-	bool isEnd = false;
 	bool isRestarted = false;
 	bool isScrolled = false;
 	bool collisionCheat = false;
@@ -56,111 +56,138 @@ int main()
 	float playerGravity = gravity;
 
 	//load from files;
+	Music menuMusic;
+	menuMusic.openFromFile("resources/audio/lobby.wav");
+	menuMusic.setVolume(25);
+	menuMusic.setLoop(true);
+
+	Music introMusic;
+	introMusic.openFromFile("resources/audio/intro.wav");
+	introMusic.setVolume(25);
+	introMusic.setLoop(true);
+
+	Music gameMusic;
+	gameMusic.openFromFile("resources/audio/game.wav");
+	gameMusic.setVolume(25);
+	gameMusic.setLoop(true);
+
+	Music bossMusic;
+	bossMusic.openFromFile("resources/audio/boss.wav");
+	bossMusic.setVolume(25);
+	bossMusic.setLoop(true);
+
+	Music storeMusic;
+	storeMusic.openFromFile("resources/audio/shop.wav");
+	storeMusic.setVolume(25);
+	storeMusic.setLoop(true);
+
 	Font font;
-	font.loadFromFile("Resources/Font/8BitDragon.ttf");
+	font.loadFromFile("resources/font/8BitDragon.ttf");
 
 	Texture HPP;
-	HPP.loadFromFile("Resources/Pics/hpp.jpg");
+	HPP.loadFromFile("resources/picture/hpp.jpg");
 
 	Texture MPP;
-	MPP.loadFromFile("Resources/Pics/mpp.jpg");
+	MPP.loadFromFile("resources/picture/mpp.jpg");
 
 	Texture jack;
-	jack.loadFromFile("Resources/Pics/jack.png");
+	jack.loadFromFile("resources/picture/jack.png");
 
 	Texture menubg;
-	menubg.loadFromFile("Resources/Pics/menu.jpg");
+	menubg.loadFromFile("resources/picture/menu.jpg");
 
 	Texture jacklogo;
-	jacklogo.loadFromFile("Resources/Pics/logo.png");
+	jacklogo.loadFromFile("resources/picture/logo.png");
 
 	Texture homebg;
-	homebg.loadFromFile("Resources/Pics/map_home.png");
+	homebg.loadFromFile("resources/picture/map_home.png");
 
 	Texture outdoorbg;
-	outdoorbg.loadFromFile("Resources/Pics/map_outdoor.png");
+	outdoorbg.loadFromFile("resources/picture/map_outdoor.png");
 
 	Texture skybg;
-	skybg.loadFromFile("Resources/Pics/map_sky.png");
+	skybg.loadFromFile("resources/picture/map_sky.png");
 
 	Texture mapCastle;
-	mapCastle.loadFromFile("Resources/Pics/map_castle.png");
+	mapCastle.loadFromFile("resources/picture/map_castle.png");
 
 	Texture storebg;
-	storebg.loadFromFile("Resources/Pics/shopbg.jpg");
+	storebg.loadFromFile("resources/picture/shopbg.jpg");
 
 	Texture textbox;
-	textbox.loadFromFile("Resources/Pics/textbox.png");
+	textbox.loadFromFile("resources/picture/textbox.png");
 
 	Texture awand;
-	awand.loadFromFile("Resources/Pics/sparkle.png");
+	awand.loadFromFile("resources/picture/sparkle.png");
 
 	Texture coins;
-	coins.loadFromFile("Resources/Pics/coin.png");
+	coins.loadFromFile("resources/picture/coin.png");
 
 	Texture fireball;
-	fireball.loadFromFile("Resources/Pics/fireball.png");
+	fireball.loadFromFile("resources/picture/fireball.png");
 
 	Texture hp;
-	hp.loadFromFile("Resources/Pics/hp.png");
+	hp.loadFromFile("resources/picture/hp.png");
 
 	Texture mp;
-	mp.loadFromFile("Resources/Pics/mp.png");
+	mp.loadFromFile("resources/picture/mp.png");
 
 	Texture keys;
-	keys.loadFromFile("Resources/Pics/key.png");
+	keys.loadFromFile("resources/picture/key.png");
 
 	Texture gargoyle1;
-	gargoyle1.loadFromFile("Resources/Pics/gargoyle1.png");
+	gargoyle1.loadFromFile("resources/picture/gargoyle1.png");
 
 	Texture gargoyle1Ball;
-	gargoyle1Ball.loadFromFile("Resources/Pics/ballg1.png");
+	gargoyle1Ball.loadFromFile("resources/picture/ballg1.png");
 
 	Texture gargoyle2;
-	gargoyle2.loadFromFile("Resources/Pics/gargoyle2.png");
+	gargoyle2.loadFromFile("resources/picture/gargoyle2.png");
 
 	Texture gargoyle2Ball;
-	gargoyle2Ball.loadFromFile("Resources/Pics/ballg2.png");
+	gargoyle2Ball.loadFromFile("resources/picture/ballg2.png");
 
 	Texture titan1;
-	titan1.loadFromFile("Resources/Pics/titan1.png");
+	titan1.loadFromFile("resources/picture/titan1.png");
 
 	Texture titan2;
-	titan2.loadFromFile("Resources/Pics/titan2.png");
+	titan2.loadFromFile("resources/picture/titan2.png");
 
 	Texture titan2Ball;
-	titan2Ball.loadFromFile("Resources/Pics/ballt2.png");
+	titan2Ball.loadFromFile("resources/picture/ballt2.png");
 
 	Texture monSeller;
-	monSeller.loadFromFile("Resources/Pics/mon_seller.png");
+	monSeller.loadFromFile("resources/picture/mon_seller.png");
 
 	Texture minion1;
-	minion1.loadFromFile("Resources/Pics/minion.png");
+	minion1.loadFromFile("resources/picture/minion.png");
 
 	Texture theboss;
-	theboss.loadFromFile("Resources/Pics/boss.png");
+	theboss.loadFromFile("resources/picture/boss.png");
 
 	Texture torch;
-	torch.loadFromFile("Resources/Pics/torch.png");
+	torch.loadFromFile("resources/picture/torch.png");
 
 	Texture chndlir;
-	chndlir.loadFromFile("Resources/Pics/chandelier.png");
+	chndlir.loadFromFile("resources/picture/chandelier.png");
 
 	Texture speeech;
-	speeech.loadFromFile("Resources/Pics/speech.png");
+	speeech.loadFromFile("resources/picture/speech.png");
 
 	Texture pg1;
-	pg1.loadFromFile("Resources/Pics/page1.png");
+	pg1.loadFromFile("resources/picture/page1.png");
 
 	Texture pg2;
-	pg2.loadFromFile("Resources/Pics/page2.png");
+	pg2.loadFromFile("resources/picture/page2.png");
 
 	Texture pg3;
-	pg3.loadFromFile("Resources/Pics/page3.png");
+	pg3.loadFromFile("resources/picture/page3.png");
 
 	Texture pg4;
-	pg4.loadFromFile("Resources/Pics/page4.png");
+	pg4.loadFromFile("resources/picture/page4.png");
 
+	Texture tutorialpng;
+	tutorialpng.loadFromFile("resources/picture/tutorial.png");
 
 	//initialize player;
 	player player(&jack, Vector2u(8, 8), 0.07f, 600.0f);
@@ -366,6 +393,8 @@ int main()
 	platform page3(&pg3, Vector2f(windowSize.y, windowSize.y), Vector2f(windowSize.x / 2.f, windowSize.y / 2.f));
 	platform page4(&pg4, Vector2f(windowSize.y, windowSize.y), Vector2f(windowSize.x / 2.f, windowSize.y / 2.f));
 
+	platform Tutorial(&tutorialpng, Vector2f(1500.f, 1000.f), Vector2f(windowSize.x / 2.f, windowSize.y / 2.f));
+
 
 	//initialize warpers;
 	RectangleShape warperH;
@@ -520,6 +549,7 @@ int main()
 	vector<textDisplay> dmgArray;
 
 
+
 	//loop;
 	while (window.isOpen())
 	{
@@ -545,8 +575,47 @@ int main()
 		elapse[13] = clock[13].getElapsedTime();
 		elapse[14] = clock[14].getElapsedTime();
 
-		//initialize window event;
-		Event event;
+		//music;
+		if (state == MENU)
+		{
+			menuMusic.play();
+			introMusic.stop();
+			gameMusic.stop();
+			bossMusic.stop();
+			storeMusic.stop();
+		}
+		if (state == INTRO)
+		{
+			menuMusic.stop();
+			introMusic.play();
+			gameMusic.stop();
+			bossMusic.stop();
+			storeMusic.stop();
+		}
+		if (state == HOME || state == OUTDOOR || state == SKY)
+		{
+			menuMusic.stop();
+			introMusic.stop();
+			gameMusic.play();
+			bossMusic.stop();
+			storeMusic.stop();
+		}
+		if (state == CASTLE)
+		{
+			menuMusic.stop();
+			introMusic.stop();
+			gameMusic.stop();
+			bossMusic.play();
+			storeMusic.stop();
+		}
+		if (state == STORE)
+		{
+			menuMusic.stop();
+			introMusic.stop();
+			gameMusic.stop();
+			bossMusic.stop();
+			storeMusic.play();
+		}
 
 		//check coordinate;
 		Vector2i pos = Mouse::getPosition(window);
@@ -634,7 +703,7 @@ int main()
 		button toMenu(Vector2f(windowSize.x / 2.f, 9.f * windowSize.y / 10.f), Vector2f(windowSize.x, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 			2.f, &font, 25, "RESTART AND RETURN TO MENU", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 
-		button ending(Vector2f(windowSize.x - 150.f, 11.f * windowSize.y / 12.f), Vector2f(windowSize.x, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+		button Tomenu(Vector2f(windowSize.x - 150.f, 11.f * windowSize.y / 12.f), Vector2f(300, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 			2.f, &font, 20, "Return To Menu", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 
 		if (state == CREDIT || state == SCORE || state == TUTORIAL) background.body.setFillColor(Color(150, 150, 150, 111));
@@ -759,7 +828,14 @@ int main()
 		if (state == INPUT)
 		{
 			//set window event;
-			while (window.pollEvent(event)) if (event.type == Event::Closed) window.close();
+			while (window.pollEvent(event))
+			{
+				if (event.type == Event::Closed) window.close();
+				if (event.type == Event::TextEntered)
+				{
+
+				}
+			}
 
 		}
 
@@ -1871,7 +1947,14 @@ int main()
 						winBox.draw(window);
 						win.update(mousePos);
 						win.draw(window);
-						if (Keyboard::isKeyPressed(Keyboard::Return)) isEnd = true;
+						if (Keyboard::isKeyPressed(Keyboard::Return))
+						{
+							isRestarted = true;
+							window.clear();
+							state = CREDIT;
+							isScrolled = true;
+							speech.body.setPosition(windowSize.x / 2.f, windowSize.y + 380.f);
+						}
 					}
 				}
 
@@ -2566,17 +2649,7 @@ int main()
 			toMenu.draw(window);
 		}
 
-		//endgame;
-		if (isEnd)
-		{
-
-			window.clear();
-			state = CREDIT;
-			isScrolled = true;
-			speech.body.setPosition(windowSize.x / 2.f, windowSize.y + 380.f);
-		}
-
-		//restart//
+		//restart;
 		if (isRestarted)
 		{
 			isRestarted = false;
@@ -2644,9 +2717,27 @@ int main()
 		if (state == TUTORIAL)
 		{
 			//set window event;
-			while (window.pollEvent(event)) if (event.type == Event::Closed) window.close();
+			while (window.pollEvent(event))
+			{
+				if (event.type == Event::Closed) window.close();
 
+				//to menu;
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && Tomenu.getGlobalBounds().contains(mousePos)) isRestarted = true;
+			}
+
+			Tomenu.update(mousePos);
+
+			//set view;
+			view.setCenter(windowSize / 2.f);
+
+			//clear screen;
 			window.clear();
+			window.setView(view);
+
+			//draw;
+			background.draw(window);
+			Tutorial.draw(window);
+			Tomenu.draw(window);
 		}
 
 		//credit//
@@ -2658,7 +2749,7 @@ int main()
 				if (event.type == Event::Closed) window.close();
 
 				//to menu;
-				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && ending.getGlobalBounds().contains(mousePos)) isRestarted = true;
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && Tomenu.getGlobalBounds().contains(mousePos)) isRestarted = true;
 			}
 
 			//update;
@@ -2668,7 +2759,7 @@ int main()
 				else isScrolled = false;
 			}
 
-			ending.update(mousePos);
+			Tomenu.update(mousePos);
 
 			//set view;
 			view.setCenter(windowSize / 2.f);
@@ -2680,7 +2771,7 @@ int main()
 			//draw;
 			background.draw(window);
 			speech.draw(window);
-			ending.draw(window);
+			Tomenu.draw(window);
 		}
 
 		//display window//

@@ -5,6 +5,7 @@
 #include "collider.h"
 #include "projectile.h"
 #include "playerGUI.h"
+#include "hitbox.h"
 
 class player
 {
@@ -25,7 +26,7 @@ public:
 	void draw(RenderWindow& window);
 	void onCollision(Vector2f direction);
 	void setAnimationRow(unsigned int r) { row = r; }
-
+	
 	collider getCollider() { return collider(body); }
 
 private:

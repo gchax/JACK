@@ -2,9 +2,8 @@
 
 hitbox::hitbox(Vector2f* position, Vector2f size)
 {
-	this->size = size;
 	this->position = *position;
-	box.setPosition(*position);
+	box.setPosition(this->position);
 	box.setSize(size);
 	box.setOrigin(box.getSize() / 2.f);
 	box.setFillColor(Color::Transparent);
@@ -14,15 +13,10 @@ hitbox::hitbox(Vector2f* position, Vector2f size)
 
 void hitbox::update()
 {
-	box.setPosition(position);
+	box.setPosition(this->position);
 }
 
 void hitbox::draw(RenderWindow& window)
 {
 	window.draw(box);
-}
-
-bool hitbox::checkCollider(const FloatRect& frect)
-{
-	return this->box.getGlobalBounds().intersects(frect);
 }
