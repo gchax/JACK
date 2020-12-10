@@ -24,7 +24,6 @@
     <ClCompile Include="button.cpp" />
     <ClCompile Include="collider.cpp" />
     <ClCompile Include="enemy.cpp" />
-    <ClCompile Include="hitbox.cpp" />
     <ClCompile Include="item.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="platform.cpp" />
@@ -32,6 +31,7 @@
     <ClCompile Include="playerGUI.cpp" />
     <ClCompile Include="projectile.cpp" />
     <ClCompile Include="random.cpp" />
+    <ClCompile Include="textbox.cpp" />
     <ClCompile Include="textDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -40,7 +40,6 @@
     <ClInclude Include="button.h" />
     <ClInclude Include="collider.h" />
     <ClInclude Include="enemy.h" />
-    <ClInclude Include="hitbox.h" />
     <ClInclude Include="item.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="player.h" />
@@ -48,6 +47,7 @@
     <ClInclude Include="projectile.h" />
     <ClInclude Include="random.h" />
     <ClInclude Include="stdfn.h" />
+    <ClInclude Include="textbox.h" />
     <ClInclude Include="textDisplay.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

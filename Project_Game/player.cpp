@@ -16,36 +16,86 @@ void player::update(float deltaTime)
 	body.setFillColor(Color(255, 255, 255, 255));
 	Vector2f movement(0.0f, 0.0f);
 
-	//walk
+	//walk;
 	if (Keyboard::isKeyPressed(Keyboard::W))
 	{
 		movement.y -= speed * deltaTime;
 		direction = UP;
+		run = false;
 		row = 1;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::S))
 	{
 		movement.y += speed * deltaTime;
 		direction = DOWN;
+		run = false;
 		row = 3;
 	}
 	if (Keyboard::isKeyPressed(Keyboard::A))
 	{
 		movement.x -= speed * deltaTime;
 		direction = LEFT;
+		run = false;
 		row = 5;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::D))
 	{
 		movement.x += speed * deltaTime;
 		direction = RIGHT;
+		run = false;
 		row = 7;
 	}
 
-	if (row == 1 && movement.y == 0) row = 0;
-	if (row == 3 && movement.y == 0) row = 2;
-	if (row == 5 && movement.x == 0) row = 4;
-	if (row == 7 && movement.x == 0) row = 6;
+	//run;
+	if (Keyboard::isKeyPressed(Keyboard::W) && Keyboard::isKeyPressed(Keyboard::LShift))
+	{
+		movement.y -= speed * deltaTime / 3.f;
+		direction = UP;
+		run = true;
+		row = 1;
+	}
+	else if (Keyboard::isKeyPressed(Keyboard::S) && Keyboard::isKeyPressed(Keyboard::LShift))
+	{
+		movement.y += speed * deltaTime / 3.f;
+		direction = DOWN;
+		run = true;
+		row = 3;
+	}
+	if (Keyboard::isKeyPressed(Keyboard::A) && Keyboard::isKeyPressed(Keyboard::LShift))
+	{
+		movement.x -= speed * deltaTime / 3.f;
+		direction = LEFT;
+		run = true;
+		row = 5;
+	}
+	else if (Keyboard::isKeyPressed(Keyboard::D) && Keyboard::isKeyPressed(Keyboard::LShift))
+	{
+		movement.x += speed * deltaTime / 3.f;
+		direction = RIGHT;
+		run = true;
+		row = 7;
+	}
+
+	if (row == 1 && movement.y == 0)
+	{
+		run = false;
+		row = 0;
+	}
+	if (row == 3 && movement.y == 0)
+	{
+		run = false;
+		row = 2;
+	}
+	if (row == 5 && movement.x == 0)
+	{
+		run = false;
+		row = 4;
+	}
+	if (row == 7 && movement.x == 0)
+	{
+		run = false; 
+		row = 6;
+	}
 
 	animation.update(row, deltaTime);
 	body.setTextureRect(animation.uvRect);
@@ -68,12 +118,28 @@ void player::updateBossFight(float deltaTime)
 	{
 		velocity.x -= speed;
 		direction = LEFT;
+		run = false;
 		row = 5;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::D))
 	{
 		velocity.x += speed;
 		direction = RIGHT;
+		run = false;
+		row = 7;
+	}
+	if (Keyboard::isKeyPressed(Keyboard::A) && Keyboard::isKeyPressed(Keyboard::LShift))
+	{
+		velocity.x -= speed / 3.f;
+		direction = LEFT;
+		run = false;
+		row = 5;
+	}
+	else if (Keyboard::isKeyPressed(Keyboard::D) && Keyboard::isKeyPressed(Keyboard::LShift))
+	{
+		velocity.x += speed / 3.f;
+		direction = RIGHT;
+		run = false;
 		row = 7;
 	}
 

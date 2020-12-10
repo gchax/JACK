@@ -1,6 +1,6 @@
 #include "playerGUI.h"
 
-playerGUI::playerGUI(Font* font, Texture* HPP, Texture* MPP, float playerHP, float maxHP, float playerMP, float maxMP, int hpp, int mpp,
+playerGUI::playerGUI(Font* font, Texture* HPP, Texture* MPP, float playerHP, float maxHP, float playerMP, float maxMP, float playerEnergy,  int hpp, int mpp,
 	int playerMoney, int score, int playerWandLevel, int key, float bossHP)
 {
 	this->font = font;
@@ -12,6 +12,7 @@ playerGUI::playerGUI(Font* font, Texture* HPP, Texture* MPP, float playerHP, flo
 	this->intMP = this->mp;
 	this->maxMP = maxMP;
 	this->intMaxMP = this->maxMP;
+	this->energy = playerEnergy;
 	this->hpp = hpp;
 	this->mpp = mpp;
 	this->wand = playerWandLevel;
@@ -29,7 +30,6 @@ playerGUI::playerGUI(Font* font, Texture* HPP, Texture* MPP, float playerHP, flo
 	this->hpAmount.setSize(Vector2f(barMaxWidth, 40.f));
 	this->hpAmount.setFillColor(Color::Green);
 	this->hpAmount.setOutlineColor(Color::Black);
-	this->hpAmount.setOutlineThickness(3);
 
 	this->hpRead.setCharacterSize(15);
 	this->hpRead.setFont(*this->font);
@@ -37,21 +37,29 @@ playerGUI::playerGUI(Font* font, Texture* HPP, Texture* MPP, float playerHP, flo
 	this->hpRead.setFillColor(Color::White);
 	this->hpRead.setOutlineThickness(1);
 
-	this->mpBarBase.setSize(Vector2f(barMaxWidth, 15.f));
+	this->mpBarBase.setSize(Vector2f(barMaxWidth, 20.f));
 	this->mpBarBase.setFillColor(Color(50, 50, 50));
 	this->mpBarBase.setOutlineColor(Color::Black);
 	this->mpBarBase.setOutlineThickness(3);
 
-	this->mpAmount.setSize(Vector2f(barMaxWidth, 15.f));
+	this->mpAmount.setSize(Vector2f(barMaxWidth, 20.f));
 	this->mpAmount.setFillColor(Color::Magenta);
 	this->mpAmount.setOutlineColor(Color::Black);
-	this->mpAmount.setOutlineThickness(3);
 
 	this->mpRead.setCharacterSize(15);
 	this->mpRead.setFont(*this->font);
 	this->mpRead.setString(to_string(intMP) + " / " + to_string(intMaxMP));
 	this->mpRead.setFillColor(Color::White);
 	this->mpRead.setOutlineThickness(1);
+
+	this->energyBarBase.setSize(Vector2f(barMaxWidth, 10.f));
+	this->energyBarBase.setFillColor(Color(50, 50, 50));
+	this->energyBarBase.setOutlineColor(Color::Black);
+	this->energyBarBase.setOutlineThickness(3);
+
+	this->energyAmount.setSize(Vector2f(barMaxWidth, 10.f));
+	this->energyAmount.setFillColor(Color::Yellow);
+	this->energyAmount.setOutlineColor(Color::Black);
 
 	this->hpP.setSize(Vector2f(60.f, 60.f));
 	this->hpP.setTexture(HPP);
@@ -108,28 +116,41 @@ playerGUI::playerGUI(Font* font, Texture* HPP, Texture* MPP, float playerHP, flo
 	this->bossHpRead.setString(to_string(intBossHP) + " / " + to_string(200000));
 	this->bossHpRead.setFillColor(Color::White);
 	this->bossHpRead.setOutlineThickness(1);
+
+	if (this->intHP <= 0) this->intHP = 0;
+	if (this->intMP <= 0) this->intMP = 0;
+
+	hpPercentage = hp / maxHP;
+	hpDisplay = static_cast<float>(std::floor(this->barMaxWidth * hpPercentage));
+	if (hpDisplay < 0) hpDisplay = 0;
+	this->hpAmount.setSize(Vector2f(hpDisplay, this->hpAmount.getSize().y));
+
+	mpPercentage = mp / maxMP;
+	mpDisplay = static_cast<float>(std::floor(this->barMaxWidth * mpPercentage));
+	if (mpDisplay < 0) mpDisplay = 0;
+	this->mpAmount.setSize(Vector2f(mpDisplay, this->mpAmount.getSize().y));
+
+	energyPercentage = energy / maxEnergy;
+	energyDisplay = static_cast<float>(std::floor(this->barMaxWidth * energyPercentage));
+	if (energyDisplay < 0) energyDisplay = 0;
+	this->energyAmount.setSize(Vector2f(energyDisplay, this->energyAmount.getSize().y));
+
+	bossHpPercentage = bossHP / 200000;
+	bossHpDisplay = static_cast<float>(std::floor(this->bossBarMaxWidth * bossHpPercentage));
+	if (bossHpDisplay < 0) bossHpDisplay = 0;
+	this->bossHpAmount.setSize((Vector2f(bossHpDisplay, this->bossHpAmount.getSize().y)));
+
+	if (wand == 0) state = "";
+	else if (wand > 0 && wand < 60) state = "WAND LEVEL: " + to_string(this->wand);
+	else if (wand == 60) state = "WAND LEVEL: MAX";
+
+	if (key == 0) keycount = "";
+	else if (key > 0 && key < 5) keycount = "KEY: " + to_string(this->key);
+	else if (key == 5) keycount = "CASTLE DOOR UNLOCKED";
 }
 
 void playerGUI::updateStatus(float deltaTime, Vector2f windowSize, Vector2f playerPosition)
 {
-	if (this->intHP <= 0) this->intHP = 0;
-	if (this->intMP <= 0) this->intMP = 0;
-
-	float hpPercentage = hp / maxHP;
-	float hpDisplay = static_cast<float>(std::floor(this->barMaxWidth * hpPercentage));
-	if (hpDisplay < 0) hpDisplay = 0;
-	this->hpAmount.setSize((Vector2f(hpDisplay, this->hpAmount.getSize().y)));
-
-	float mpPercentage = mp / maxMP;
-	float mpDisplay = static_cast<float>(std::floor(this->barMaxWidth * mpPercentage));
-	if (mpDisplay < 0) mpDisplay = 0;
-	this->mpAmount.setSize((Vector2f(mpDisplay, this->mpAmount.getSize().y)));
-
-	string keycount;
-	if (key == 0) keycount = "";
-	else if (key > 0 && key < 5) keycount = "KEY: " + to_string(this->key);
-	else if (key == 5) keycount = "CASTLE DOOR UNLOCKED";
-
 	this->hpBarBase.setPosition(playerPosition.x - windowSize.x / 2.f + 20.f, playerPosition.y - windowSize.y / 2.f + 20.f);
 	this->hpAmount.setPosition(this->hpBarBase.getPosition());
 	this->hpRead.setOrigin(Vector2f(0.f, hpRead.getGlobalBounds().height / 2.f));
@@ -137,8 +158,11 @@ void playerGUI::updateStatus(float deltaTime, Vector2f windowSize, Vector2f play
 
 	this->mpBarBase.setPosition(playerPosition.x - windowSize.x / 2.f + 20.f, playerPosition.y - windowSize.y / 2.f + 80.f);
 	this->mpAmount.setPosition(this->mpBarBase.getPosition());
-	this->mpRead.setOrigin(Vector2f(0.f, mpRead.getGlobalBounds().height / 2.f));
+	this->mpRead.setOrigin(Vector2f(0.f, 0.f));
 	this->mpRead.setPosition(this->mpBarBase.getPosition().x + this->mpBarBase.getSize().x + 10.f, this->mpBarBase.getPosition().y + this->mpBarBase.getSize().y / 2.f);
+
+	this->energyBarBase.setPosition(this->mpBarBase.getPosition().x, this->mpBarBase.getPosition().y + 20.f);
+	this->energyAmount.setPosition(this->energyBarBase.getPosition());
 
 	this->Score.setOrigin(this->Score.getLocalBounds().width / 2.f, 0.f);
 	this->Score.setPosition(playerPosition.x, playerPosition.y - windowSize.y / 2.f + 20.f);
@@ -162,11 +186,6 @@ void playerGUI::updateCoin(float deltaTime, Vector2f windowSize, Vector2f player
 
 void playerGUI::updateWandState(float deltaTime, Vector2f windowSize, Vector2f playerPosition)
 {
-	string state;
-	if (wand == 0) state = "";
-	else if (wand > 0 && wand < 60) state = "WAND LEVEL: " + to_string(this->wand);
-	else if (wand == 60) state = "WAND LEVEL: MAX";
-
 	this->wandLevel.setString(state);
 	this->wandLevel.setOrigin(this->wandLevel.getLocalBounds().width, 0.f);
 	this->wandLevel.setPosition(playerPosition.x + windowSize.x / 2.f - 20.f, playerPosition.y - windowSize.y / 2.f + 70.f);
@@ -174,30 +193,6 @@ void playerGUI::updateWandState(float deltaTime, Vector2f windowSize, Vector2f p
 
 void playerGUI::updateCastle(float deltaTime, Vector2f windowSize)
 {
-	if (this->intHP <= 0) this->intHP = 0;
-	if (this->intMP <= 0) this->intMP = 0;
-	if (this->intBossHP <= 0) this->intBossHP = 0;
-
-	float hpPercentage = hp / maxHP;
-	float hpDisplay = static_cast<float>(std::floor(this->barMaxWidth * hpPercentage));
-	if (hpDisplay < 0) hpDisplay = 0;
-	this->hpAmount.setSize((Vector2f(hpDisplay, this->hpAmount.getSize().y)));
-
-	float mpPercentage = mp / maxMP;
-	float mpDisplay = static_cast<float>(std::floor(this->barMaxWidth * mpPercentage));
-	if (mpDisplay < 0) mpDisplay = 0;
-	this->mpAmount.setSize((Vector2f(mpDisplay, this->mpAmount.getSize().y)));
-
-	float bossHpPercentage = bossHP / 200000;
-	float bossHpDisplay = static_cast<float>(std::floor(this->bossBarMaxWidth * bossHpPercentage));
-	if (bossHpDisplay < 0) bossHpDisplay = 0;
-	this->bossHpAmount.setSize((Vector2f(bossHpDisplay, this->bossHpAmount.getSize().y)));
-
-	string state;
-	if (wand == 0) state = "";
-	else if (wand > 0 && wand < 60) state = "WAND LEVEL: " + to_string(this->wand);
-	else if (wand == 60) state = "WAND LEVEL: MAX";
-
 	this->hpBarBase.setOrigin(hpBarBase.getSize().x, 0.f);
 	this->hpBarBase.setPosition(windowSize.x / 2.f - 20.f, 20.f - windowSize.y / 2.f);
 	this->hpAmount.setOrigin(hpAmount.getSize().x, 0.f);
@@ -211,6 +206,11 @@ void playerGUI::updateCastle(float deltaTime, Vector2f windowSize)
 	this->mpAmount.setPosition(this->mpBarBase.getPosition());
 	this->mpRead.setOrigin(mpRead.getGlobalBounds().width, mpRead.getGlobalBounds().height / 2.f);
 	this->mpRead.setPosition(this->mpBarBase.getPosition().x - this->mpBarBase.getSize().x - 10.f, this->mpBarBase.getPosition().y + this->mpBarBase.getSize().y / 2.f);
+
+	this->energyBarBase.setPosition(this->mpBarBase.getPosition().x, this->mpBarBase.getPosition().y + 20.f);
+	this->energyBarBase.setOrigin(energyBarBase.getSize().x, 0.f);
+	this->energyAmount.setPosition(this->energyBarBase.getPosition());
+	this->energyAmount.setOrigin(energyAmount.getSize().x, 0.f);
 
 	this->bossHpBarBase.setPosition(20.f - windowSize.x / 2.f, 20.f - windowSize.y / 2.f);
 	this->bossHpAmount.setPosition(this->bossHpBarBase.getPosition());
@@ -245,6 +245,8 @@ void playerGUI::drawStatus(RenderWindow& window)
 	window.draw(this->mpBarBase);
 	window.draw(this->mpAmount);
 	window.draw(this->mpRead);
+	window.draw(this->energyBarBase);
+	window.draw(this->energyAmount);
 	window.draw(this->Score);
 	window.draw(this->hpP);
 	window.draw(this->hppCounter);

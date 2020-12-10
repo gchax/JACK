@@ -5,7 +5,6 @@
 #include "collider.h"
 #include "projectile.h"
 #include "playerGUI.h"
-#include "hitbox.h"
 
 class player
 {
@@ -17,8 +16,9 @@ public:
 	float speed = 0.f;
 	float hp = 0.f;
 	float mp = 0.f;
-	int money = 0;
 	float gravity = 0.f;
+	int money = 0;
+	bool run = false;
 
 	void update(float deltaTime);
 	void updateBossFight(float deltaTime);

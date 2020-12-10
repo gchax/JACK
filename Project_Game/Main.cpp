@@ -34,6 +34,15 @@ int main()
 	bool isUnlocked = false;
 	bool isRestarted = false;
 	bool isScrolled = false;
+	bool playMenuMusic = false;
+	bool playIntroMusic = false;
+	bool playGameMusic = false;
+	bool playBossMusic = false;
+	bool playStoreMusic = false;
+	bool playEndMusic = false;
+	bool playRoar = false;
+	bool playLaugh = false;
+	bool playYouDie = false;
 	bool collisionCheat = false;
 	bool gravityCheat = false;
 	bool unlimitedManaCheat = false;
@@ -41,11 +50,11 @@ int main()
 	int state = MENU;
 	int bossPhase = STILL;
 	int buttonState = UNSELECTED;
-	int wandLevel = 0;
+	int wandLevel = 60;
 	int key = 0;
 	int playerScore = 0;
 	int playerMoney = 0;
-	int hpPotion = 0;
+	int hpPotion = 4;
 	int mpPotion = 0;
 	int pattern = 0;
 	int page = 1;
@@ -53,6 +62,7 @@ int main()
 	float maxmp = maxMP;
 	float playerHP = maxhp;
 	float playerMP = maxmp;
+	float playerEnergy = maxEnergy;
 	float playerGravity = gravity;
 
 	//load from files;
@@ -60,15 +70,17 @@ int main()
 	menuMusic.openFromFile("resources/audio/lobby.wav");
 	menuMusic.setVolume(25);
 	menuMusic.setLoop(true);
+	menuMusic.play();
+	playMenuMusic = true;
 
 	Music introMusic;
 	introMusic.openFromFile("resources/audio/intro.wav");
-	introMusic.setVolume(25);
+	introMusic.setVolume(50);
 	introMusic.setLoop(true);
 
 	Music gameMusic;
 	gameMusic.openFromFile("resources/audio/game.wav");
-	gameMusic.setVolume(25);
+	gameMusic.setVolume(20);
 	gameMusic.setLoop(true);
 
 	Music bossMusic;
@@ -80,6 +92,69 @@ int main()
 	storeMusic.openFromFile("resources/audio/shop.wav");
 	storeMusic.setVolume(25);
 	storeMusic.setLoop(true);
+
+	Music endMusic;
+	endMusic.openFromFile("resources/audio/end.wav");
+	endMusic.setVolume(25);
+
+	Music die;
+	die.openFromFile("resources/audio/gameover.wav");
+	die.setVolume(25);
+
+	SoundBuffer ouch;
+	ouch.loadFromFile("resources/audio/ouch.ogg");
+	Sound hurt;
+	hurt.setBuffer(ouch);
+	hurt.setVolume(35);
+
+	SoundBuffer fire;
+	fire.loadFromFile("resources/audio/fireball.wav");
+	Sound shoot;
+	shoot.setBuffer(fire);
+	shoot.setVolume(10);
+	
+	SoundBuffer mcoin;
+	mcoin.loadFromFile("resources/audio/coin.wav");
+	Sound getcoin;
+	getcoin.setBuffer(mcoin);
+	getcoin.setVolume(50);
+
+	SoundBuffer eiei;
+	eiei.loadFromFile("resources/audio/evillaugh.wav");
+	Sound evillaugh;
+	evillaugh.setBuffer(eiei);
+	evillaugh.setVolume(35);
+	evillaugh.setPitch(5);
+
+	SoundBuffer bossRoar;
+	bossRoar.loadFromFile("resources/audio/roar.wav");
+	Sound roar;
+	roar.setBuffer(bossRoar);
+	roar.setVolume(35);
+
+	SoundBuffer oraora;
+	oraora.loadFromFile("resources/audio/ora.wav");
+	Sound ora;
+	ora.setBuffer(oraora);
+	ora.setVolume(20);
+
+	SoundBuffer turnpage;
+	turnpage.loadFromFile("resources/audio/turnpage.wav");
+	Sound turn;
+	turn.setBuffer(turnpage);
+	turn.setVolume(40);
+
+	SoundBuffer swallow;
+	swallow.loadFromFile("resources/audio/drink.wav");
+	Sound drink;
+	drink.setBuffer(swallow);
+	drink.setVolume(50);
+
+	SoundBuffer kill;
+	kill.loadFromFile("resources/audio/kill.ogg");
+	Sound dead;
+	dead.setBuffer(kill);
+	dead.setVolume(35);
 
 	Font font;
 	font.loadFromFile("resources/font/8BitDragon.ttf");
@@ -453,16 +528,6 @@ int main()
 	enemy normalGargoyle(&gargoyle1, Vector2u(5, 2), Vector2f(360.f, 232.f), Vector2f(generateIntRandom(500, 100), generateIntRandom(2300, 700)), 0.1f, 180.f, 500.f, 15);
 	vector<enemy>::const_iterator gargoyle1Iter;
 	vector<enemy> gargoyle1Array;
-	for (int i = 0;i < 7;i++)
-	{
-		gargoyle1Array.push_back(normalGargoyle);
-		normalGargoyle.body.setPosition(generateIntRandom(500, 100), generateIntRandom(2300, 700));
-	}
-	for (int i = 0;i < 8;i++)
-	{
-		gargoyle1Array.push_back(normalGargoyle);
-		normalGargoyle.body.setPosition(generateIntRandom(500, 1500), generateIntRandom(2300, 700));
-	}
 	projectile gargoyle1Bullet(&gargoyle1Ball, 800.f, 5.f);
 	vector<projectile>::const_iterator gargoyle1BulletIter;
 	vector<projectile> gargoyle1BulletArray;
@@ -470,37 +535,17 @@ int main()
 	enemy advancedGargoyle(&gargoyle2, Vector2u(5, 2), Vector2f(348.f, 372.f), Vector2f(generateIntRandom(500, 100), generateIntRandom(2300, 700)), 0.1f, 250.f, 1500.f, 25);
 	vector<enemy>::const_iterator gargoyle2Iter;
 	vector<enemy> gargoyle2Array;
-	for (int i = 0;i < 2;i++)
-	{
-		gargoyle2Array.push_back(advancedGargoyle);
-		advancedGargoyle.body.setPosition(generateIntRandom(500, 0), generateIntRandom(2300, 700));
-	}
-	for (int i = 0;i < 3;i++)
-	{
-		gargoyle2Array.push_back(advancedGargoyle);
-		advancedGargoyle.body.setPosition(generateIntRandom(500, 1600), generateIntRandom(2300, 700));
-	}
 	projectile gargoyle2Bullet(&gargoyle2Ball, 1000.f, 20.f);
 	vector<projectile>::const_iterator gargoyle2BulletIter;
 	vector<projectile> gargoyle2BulletArray;
 
-	enemy normalTitan(&titan1, Vector2u(3, 4), Vector2f(304.f, 400.f), Vector2f(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f)), 0.5f, 250.f, 2500.f, 30);
+	enemy normalTitan(&titan1, Vector2u(3, 4), Vector2f(304.f, 400.f), Vector2f(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f)), 0.5f, 240.f, 2500.f, 30);
 	vector<enemy>::const_iterator titan1Iter;
 	vector<enemy> titan1Array;
-	for (int i = 0;i < 10;i++)
-	{
-		titan1Array.push_back(normalTitan);
-		normalTitan.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
-	}
 
 	enemy advancedTitan(&titan2, Vector2u(3, 4), Vector2f(304.f, 400.f), Vector2f(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f)), 0.5f, 280.f, 5000.f, 70);
 	vector<enemy>::const_iterator titan2Iter;
 	vector<enemy> titan2Array;
-	for (int i = 0;i < 5;i++)
-	{
-		titan2Array.push_back(advancedTitan);
-		advancedTitan.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
-	}
 	projectile titan2Bullet(&titan2Ball, 1200.f, 50.f);
 	vector<projectile>::const_iterator titan2BulletIter;
 	vector<projectile> titan2BulletArray;
@@ -549,7 +594,6 @@ int main()
 	vector<textDisplay> dmgArray;
 
 
-
 	//loop;
 	while (window.isOpen())
 	{
@@ -574,48 +618,6 @@ int main()
 		elapse[12] = clock[12].getElapsedTime();
 		elapse[13] = clock[13].getElapsedTime();
 		elapse[14] = clock[14].getElapsedTime();
-
-		//music;
-		if (state == MENU)
-		{
-			menuMusic.play();
-			introMusic.stop();
-			gameMusic.stop();
-			bossMusic.stop();
-			storeMusic.stop();
-		}
-		if (state == INTRO)
-		{
-			menuMusic.stop();
-			introMusic.play();
-			gameMusic.stop();
-			bossMusic.stop();
-			storeMusic.stop();
-		}
-		if (state == HOME || state == OUTDOOR || state == SKY)
-		{
-			menuMusic.stop();
-			introMusic.stop();
-			gameMusic.play();
-			bossMusic.stop();
-			storeMusic.stop();
-		}
-		if (state == CASTLE)
-		{
-			menuMusic.stop();
-			introMusic.stop();
-			gameMusic.stop();
-			bossMusic.play();
-			storeMusic.stop();
-		}
-		if (state == STORE)
-		{
-			menuMusic.stop();
-			introMusic.stop();
-			gameMusic.stop();
-			bossMusic.stop();
-			storeMusic.play();
-		}
 
 		//check coordinate;
 		Vector2i pos = Mouse::getPosition(window);
@@ -713,16 +715,19 @@ int main()
 		Vector2f playerPosition = player.body.getPosition();
 		collider playerCollision = player.getCollider();
 		player.hp = playerHP;
-		if (playerHP >= maxHP) playerHP = maxHP;
+		if (playerHP >= maxhp) playerHP = maxhp;
+		if (maxhp >= 12000) maxhp = 12000;
 		player.mp = playerMP;
-		if (playerMP >= maxMP) playerMP = maxMP;
+		if (playerMP >= maxmp) playerMP = maxmp;
+		if (maxmp >= 2000) maxmp = 2000;
+		if (playerEnergy >= maxEnergy) playerEnergy = maxEnergy;
 		player.money = playerMoney;
 		if (playerMoney < 0) playerMoney = 0;
 		if (wandLevel >= 60) wandLevel = 60;
 		player.gravity = playerGravity;
 		hpp.gravity = playerGravity;
 		mpp.gravity = playerGravity;
-		playerGUI gui(&font, &HPP, &MPP, player.hp, maxhp, player.mp, maxmp, hpPotion, mpPotion, player.money, playerScore, wandLevel, key, boss.hp);
+		playerGUI gui(&font, &HPP, &MPP, player.hp, maxhp, player.mp, maxmp, playerEnergy, hpPotion, mpPotion, player.money, playerScore, wandLevel, key, boss.hp);
 		float atkSpd = 0.4f - wandLevel / 600.f;
 
 		//loop counters;
@@ -796,6 +801,24 @@ int main()
 				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && exitGame.getGlobalBounds().contains(mousePos)) window.close();
 			}
 
+			//music;
+			if (!playMenuMusic)
+			{
+				menuMusic.play();
+				introMusic.stop();
+				gameMusic.stop();
+				bossMusic.stop();
+				storeMusic.stop();
+				endMusic.stop();
+				die.stop();
+				playMenuMusic = true;
+				playIntroMusic = false;
+				playGameMusic = false;
+				playBossMusic = false;
+				playStoreMusic = false;
+				playYouDie = false;
+			}
+
 			//update buttons;
 			startGame.update(mousePos);
 			score.update(mousePos);
@@ -853,7 +876,11 @@ int main()
 					//page up;
 					if (event.type == sf::Event::KeyPressed)
 					{
-						if (page < 4) page++; //page up;
+						if (page < 4) //page up;
+						{
+							turn.play();
+							page++;
+						}
 						else if (page == 4 && event.key.code == Keyboard::Space) //start game;
 						{
 							window.clear();
@@ -862,6 +889,21 @@ int main()
 							state = HOME;
 						}
 					}
+				}
+
+				//music;
+				if (!playIntroMusic)
+				{
+					menuMusic.stop();
+					introMusic.play();
+					gameMusic.stop();
+					bossMusic.stop();
+					storeMusic.stop();
+					playMenuMusic = false;
+					playIntroMusic = true;
+					playGameMusic = false;
+					playBossMusic = false;
+					playStoreMusic = false;
 				}
 
 				//set view;
@@ -880,6 +922,21 @@ int main()
 			//stage 1//
 			if (state == HOME)
 			{
+				//music;
+				if (!playIntroMusic)
+				{
+					menuMusic.stop();
+					introMusic.play();
+					gameMusic.stop();
+					bossMusic.stop();
+					storeMusic.stop();
+					playMenuMusic = false;
+					playIntroMusic = true;
+					playGameMusic = false;
+					playBossMusic = false;
+					playStoreMusic = false;
+				}
+
 				//update GUI;
 				gui.updateStatus(deltaTime, windowSize, playerPosition);
 				gui.updateCoin(deltaTime, windowSize, playerPosition);
@@ -929,6 +986,21 @@ int main()
 			//stage 2//
 			if (state == OUTDOOR)
 			{
+				//music;
+				if (!playGameMusic)
+				{
+					menuMusic.stop();
+					introMusic.stop();
+					gameMusic.play();
+					bossMusic.stop();
+					storeMusic.stop();
+					playMenuMusic = false;
+					playIntroMusic = false;
+					playGameMusic = true;
+					playBossMusic = false;
+					playStoreMusic = false;
+				}
+
 				//update GUI;
 				gui.updateStatus(deltaTime, windowSize, playerPosition);
 				gui.updateCoin(deltaTime, windowSize, playerPosition);
@@ -1009,6 +1081,20 @@ int main()
 				}
 
 				//draw entities;
+				if (normalGargoyle.isSpawned[0]) //spawn gargoyle1;
+				{
+					normalGargoyle.isSpawned[0] = false;
+					for (int i = 0;i < 7;i++)
+					{
+						normalGargoyle.body.setPosition(generateIntRandom(500, 100), generateIntRandom(2300, 700));
+						gargoyle1Array.push_back(normalGargoyle);
+					}
+					for (int i = 0;i < 8;i++)
+					{
+						normalGargoyle.body.setPosition(generateIntRandom(500, 1500), generateIntRandom(2300, 700));
+						gargoyle1Array.push_back(normalGargoyle);
+					}
+				}
 				if (normalGargoyle.isRespawned) //respawn gargoyle1;
 				{
 					int LoR = generateIntRandom(2, 1);
@@ -1074,7 +1160,9 @@ int main()
 							Key.body.setPosition(generateIntRandom(480, 840), gargoyle1Array[gargoyle1Counter].body.getPosition().y + 25.f);
 							keyArray.push_back(Key);
 						}
+						dead.play();
 						entityValue = gargoyle1Value;
+						playerScore += 100;
 						gargoyle1Array.erase(gargoyle1Iter);
 						normalGargoyle.isRespawned = true;
 						break;
@@ -1087,6 +1175,7 @@ int main()
 					if (gargoyle1BulletArray[gargoyle1BulletCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
 					{
 						player.hurt();
+						hurt.play();
 						int damage = gargoyle1BulletArray[gargoyle1BulletCounter].damage;
 						dmgDp.text.setString("-" + to_string(damage));
 						dmgDp.text.setPosition(playerPosition);
@@ -1112,6 +1201,20 @@ int main()
 					gargoyle1Counter++;
 				}
 
+				if (advancedGargoyle.isSpawned[0]) //spawn gargoyle1;
+				{
+					advancedGargoyle.isSpawned[0] = false;
+					for (int i = 0;i < 2;i++)
+					{
+						advancedGargoyle.body.setPosition(generateIntRandom(500, 0), generateIntRandom(2300, 700));
+						gargoyle2Array.push_back(advancedGargoyle);
+					}
+					for (int i = 0;i < 3;i++)
+					{
+						advancedGargoyle.body.setPosition(generateIntRandom(500, 1600), generateIntRandom(2300, 700));
+						gargoyle2Array.push_back(advancedGargoyle);
+					}
+				}
 				if (advancedGargoyle.isRespawned) //respawn gargoyle2;
 				{
 					int LoR = generateIntRandom(2, 1);
@@ -1177,7 +1280,9 @@ int main()
 							Key.body.setPosition(generateIntRandom(480, 840), gargoyle2Array[gargoyle2Counter].body.getPosition().y + 25.f);
 							keyArray.push_back(Key);
 						}
+						dead.play();
 						entityValue = gargoyle2Value;
+						playerScore += 250;
 						gargoyle2Array.erase(gargoyle2Iter);
 						advancedGargoyle.isRespawned = true;
 						break;
@@ -1190,6 +1295,7 @@ int main()
 					if (gargoyle2BulletArray[gargoyle2BulletCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
 					{
 						player.hurt();
+						hurt.play();
 						int damage = gargoyle2BulletArray[gargoyle2BulletCounter].damage;
 						dmgDp.text.setString("-" + to_string(damage));
 						dmgDp.text.setPosition(playerPosition);
@@ -1244,6 +1350,21 @@ int main()
 			//stage 3//
 			if (state == SKY)
 			{
+				//music;
+				if (!playGameMusic)
+				{
+					menuMusic.stop();
+					introMusic.stop();
+					gameMusic.play();
+					bossMusic.stop();
+					storeMusic.stop();
+					playMenuMusic = false;
+					playIntroMusic = false;
+					playGameMusic = true;
+					playBossMusic = false;
+					playStoreMusic = false;
+				}
+
 				//update GUI;
 				gui.updateStatus(deltaTime, windowSize, playerPosition);
 				gui.updateCoin(deltaTime, windowSize, playerPosition);
@@ -1320,6 +1441,15 @@ int main()
 				}
 
 				//draw entities;
+				if (normalTitan.isSpawned[0]) //spawn titan1;
+				{
+					normalTitan.isSpawned[0] = false;
+					for (int i = 0;i < 10;i++)
+					{
+						normalTitan.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
+						titan1Array.push_back(normalTitan);
+					}
+				}
 				if (normalTitan.isRespawned) //respawn titan1;
 				{
 					normalTitan.isRespawned = false;
@@ -1333,18 +1463,16 @@ int main()
 					for (int i = 0; i < blockS0.size(); i++) blockS0[i].getCollider().checkCollider(titan1Collision, 1.0f);
 					for (int i = 0; i < blockS2.size(); i++) blockS2[i].getCollider().checkCollider(titan1Collision, 1.0f);
 
-					if (player.body.getGlobalBounds().intersects(titan1Array[titan1Counter].body.getGlobalBounds()))
+					if (player.body.getGlobalBounds().intersects(titan1Array[titan1Counter].body.getGlobalBounds()) && elapse[1].asSeconds() >= 0.5f)
 					{
+						clock[1].restart();
 						player.hurt();
-						if (elapse[1].asSeconds() >= 0.5f)
-						{
-							clock[1].restart();
-							int damage = titan1Array[titan1Counter].damage;
-							dmgDp.text.setString("-" + to_string(damage));
-							dmgDp.text.setPosition(playerPosition);
-							dmgArray.push_back(dmgDp);
-							if (!unlimitedHealthCheat) playerHP -= damage;
-						}
+						hurt.play();
+						int damage = titan1Array[titan1Counter].damage;
+						dmgDp.text.setString("-" + to_string(damage));
+						dmgDp.text.setPosition(playerPosition);
+						dmgArray.push_back(dmgDp);
+						if (!unlimitedHealthCheat) playerHP -= damage;
 					}
 					titan1Counter++;
 				}
@@ -1354,11 +1482,7 @@ int main()
 					if (elapse[3].asSeconds() >= 0.02f)
 					{
 						clock[3].restart();
-						if (titan1Array[titan1Counter].isAggroed)
-						{
-							titan1Array[titan1Counter].action = 1;
-							titan1Array[titan1Counter].updateAggrovated(deltaTime, playerPosition);
-						}
+						if (titan1Array[titan1Counter].isAggroed) titan1Array[titan1Counter].action = 1;
 					}
 					titan1Counter++;
 				}
@@ -1384,7 +1508,9 @@ int main()
 							Key.body.setPosition(titan1Array[titan1Counter].body.getPosition().x, titan1Array[titan1Counter].body.getPosition().y + 25.f);
 							keyArray.push_back(Key);
 						}
+						dead.play();
 						entityValue = titan1Value;
+						playerScore += 500;
 						titan1Array.erase(titan1Iter);
 						normalTitan.isRespawned = true;
 						break;
@@ -1394,11 +1520,21 @@ int main()
 				titan1Counter = 0; //draw titan1;
 				for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++)
 				{
-					titan1Array[titan1Counter].updateWalk(deltaTime);
+					if (titan1Array[titan1Counter].isAggroed) titan1Array[titan1Counter].updateAggrovated(deltaTime, player.body.getPosition());
+					else titan1Array[titan1Counter].updateWalk(deltaTime);
 					window.draw(titan1Array[titan1Counter].body);
 					titan1Counter++;
 				}
 
+				if (advancedTitan.isSpawned[0]) //spawn titan2;
+				{
+					advancedTitan.isSpawned[0] = false;
+					for (int i = 0;i < 5;i++)
+					{
+						advancedTitan.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
+						titan2Array.push_back(advancedTitan);
+					}
+				}
 				if (advancedTitan.isRespawned) //respawn titan2;
 				{
 					advancedTitan.isRespawned = false;
@@ -1414,10 +1550,11 @@ int main()
 
 					if (player.body.getGlobalBounds().intersects(titan2Array[titan2Counter].body.getGlobalBounds()))
 					{
-						player.hurt();
 						if (elapse[1].asSeconds() >= 0.5f)
 						{
 							clock[1].restart();
+							player.hurt();
+							hurt.play();
 							int damage = titan2Array[titan2Counter].damage;
 							dmgDp.text.setString("-" + to_string(damage));
 							dmgDp.text.setPosition(playerPosition);
@@ -1502,7 +1639,9 @@ int main()
 							Key.body.setPosition(titan2Array[titan2Counter].body.getPosition().x, titan2Array[titan2Counter].body.getPosition().y + 25.f);
 							keyArray.push_back(Key);
 						}
+						dead.play();
 						entityValue = titan2Value;
+						playerScore += 1000;
 						titan2Array.erase(titan2Iter);
 						advancedTitan.isRespawned = true;
 						break;
@@ -1515,6 +1654,7 @@ int main()
 					if (titan2BulletArray[titan2BulletCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
 					{
 						player.hurt();
+						hurt.play();
 						int damage = titan2BulletArray[titan2BulletCounter].damage;
 						dmgDp.text.setString("-" + to_string(damage));
 						dmgDp.text.setPosition(playerPosition);
@@ -1588,6 +1728,21 @@ int main()
 			//stage 4//
 			if (state == CASTLE)
 			{
+				//music;
+				if (!playBossMusic)
+				{
+					menuMusic.stop();
+					introMusic.stop();
+					gameMusic.stop();
+					bossMusic.play();
+					storeMusic.stop();
+					playMenuMusic = false;
+					playIntroMusic = false;
+					playGameMusic = false;
+					playBossMusic = true;
+					playStoreMusic = false;
+				}
+
 				//update GUI;
 				gui.updateCastle(deltaTime, windowSize);
 
@@ -1709,69 +1864,108 @@ int main()
 				else if (boss.hp > 0 && boss.hp <= 50000) bossPhase = MURDEROUS;
 				if (bossPhase == AGGROVATED)
 				{
+					if (!playRoar)
+					{
+						roar.play();
+						playRoar = true;
+						playLaugh = false;
+					}
 					if (minion.isSpawned[0]) //spawn minion;
 					{
+						if (!playLaugh)
+						{
+							evillaugh.play();
+							playRoar = false;
+							playLaugh = true;
+						}
 						minion.isSpawned[0] = false;
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
+						for (int i = 0;i < 3;i++)
+						{
+							minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+							minionArray.push_back(minion);
+						}
 					}
 				}
 				if (bossPhase == PISSED)
 				{
-					if (minion.isSpawned[1]) //spawn minion;
+					if (minion.isSpawned[1] && boss.hp <= 190000) //spawn minion;
 					{
+						if (!playLaugh)
+						{
+							evillaugh.play();
+							playLaugh = true;
+						}
 						minion.isSpawned[1] = false;
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
+						for (int i = 0;i < 3;i++)
+						{
+							minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+							minionArray.push_back(minion);
+						}
 					}
-					if (minion.isSpawned[2] && boss.hp <= 180000) //spawn minion;
+					if (minion.isSpawned[2] && boss.hp <= 170000) //spawn minion;
 					{
+						if (!playLaugh)
+						{
+							evillaugh.play();
+							playLaugh = true;
+						}
 						minion.isSpawned[2] = false;
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
+						for (int i = 0;i < 3;i++)
+						{
+							minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+							minionArray.push_back(minion);
+						}
 					}
-					if (minion.isSpawned[3] && boss.hp <= 160000) //spawn minion;
+					if (minion.isSpawned[3] && boss.hp <= 150000) //spawn minion;
 					{
+						if (!playLaugh)
+						{
+							evillaugh.play();
+							playLaugh = true;
+						}
 						minion.isSpawned[3] = false;
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
+						for (int i = 0;i < 3;i++)
+						{
+							minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+							minionArray.push_back(minion);
+						}
 					}
-					if (minion.isSpawned[4] && boss.hp <= 140000) //spawn minion;
+					if (minion.isSpawned[4] && boss.hp <= 130000) //spawn minion;
 					{
+						if (!playLaugh)
+						{
+							evillaugh.play();
+							playLaugh = true;
+						}
 						minion.isSpawned[4] = false;
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
+						for (int i = 0;i < 3;i++)
+						{
+							minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+							minionArray.push_back(minion);
+						}
 					}
 					if (minion.isSpawned[5] && boss.hp <= 120000) //spawn minion;
 					{
+						if (!playLaugh)
+						{
+							evillaugh.play();
+							playLaugh = true;
+						}
 						minion.isSpawned[5] = false;
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
+						for (int i = 0;i < 3;i++)
+						{
+							minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+							minionArray.push_back(minion);
+						}
 					}
-					if (minion.isSpawned[6] && boss.hp <= 100001) //spawn minion;
+					if (minion.isSpawned[6] && boss.hp <= 110000) //spawn minion;
 					{
+						if (!playLaugh)
+						{
+							evillaugh.play();
+							playRoar = false;
+							playLaugh = true;
+						}
 						minion.isSpawned[6] = false;
 						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
 						minionArray.push_back(minion);
@@ -1783,10 +1977,17 @@ int main()
 				}
 				if (bossPhase == INFURIATED)
 				{
+					if (!playRoar)
+					{
+						roar.play();
+						playRoar = true;
+						playLaugh = false;
+					}
 					if (elapse[13].asSeconds() >= 1.2f)
 					{
 						pattern++;
 						if (pattern > 3) pattern = 1;
+						ora.play();
 						clock[13].restart();
 						if (playerPosition.x > boss.body.getPosition().x)
 						{
@@ -1823,10 +2024,17 @@ int main()
 				}
 				if (bossPhase == MURDEROUS)
 				{
-					if (elapse[14].asSeconds() >= 1.2f)
+					if (!playRoar)
+					{
+						roar.play();
+						playRoar = true;
+						playLaugh = false;
+					}
+					if (elapse[14].asSeconds() >= 1.f)
 					{
 						pattern++;
 						if (pattern > 2) pattern = 1;
+						ora.play();
 						clock[14].restart();
 						if (playerPosition.x > boss.body.getPosition().x)
 						{
@@ -1859,88 +2067,161 @@ int main()
 					}
 					if (minion.isSpawned[7]) //spawn minion;
 					{
+						if (!playLaugh)
+						{
+							evillaugh.play();
+							playLaugh = true;
+						}
 						minion.isSpawned[7] = false;
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
+						for (int i = 0;i < 3;i++)
+						{
+							minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+							minionArray.push_back(minion);
+						}
 					}
 					if (minion.isSpawned[8] && boss.hp <= 40000) //spawn minion;
 					{
+						if (!playLaugh)
+						{
+							evillaugh.play();
+							playLaugh = true;
+						}
 						minion.isSpawned[8] = false;
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
+						for (int i = 0;i < 3;i++)
+						{
+							minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+							minionArray.push_back(minion);
+						}
 					}
 					if (minion.isSpawned[9] && boss.hp <= 30000) //spawn minion;
 					{
+						if (!playLaugh)
+						{
+							evillaugh.play();
+							playLaugh = true;
+						}
 						minion.isSpawned[9] = false;
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
+						for (int i = 0;i < 3;i++)
+						{
+							minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+							minionArray.push_back(minion);
+						}
 					}
 					if (minion.isSpawned[10] && boss.hp <= 20000) //spawn minion;
 					{
+						if (!playLaugh)
+						{
+							evillaugh.play();
+							playLaugh = true;
+						}
 						minion.isSpawned[10] = false;
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
+						for (int i = 0;i < 3;i++)
+						{
+							minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+							minionArray.push_back(minion);
+						}
 					}
 					if (minion.isSpawned[11] && boss.hp <= 15000) //spawn minion;
 					{
+						if (!playLaugh)
+						{
+							evillaugh.play();
+							playLaugh = true;
+						}
 						minion.isSpawned[11] = false;
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
+						for (int i = 0;i < 3;i++)
+						{
+							minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+							minionArray.push_back(minion);
+						}
 					}
 					if (minion.isSpawned[12] && boss.hp <= 10000) //spawn minion;
 					{
+						if (!playLaugh)
+						{
+							evillaugh.play();
+							playLaugh = true;
+						}
 						minion.isSpawned[12] = false;
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
+						for (int i = 0;i < 3;i++)
+						{
+							minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+							minionArray.push_back(minion);
+						}
 					}
 					if (minion.isSpawned[13] && boss.hp <= 5000) //spawn minion;
 					{
+						if (!playLaugh)
+						{
+							evillaugh.play();
+							playLaugh = true;
+						}
 						minion.isSpawned[13] = false;
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
+						for (int i = 0;i < 3;i++)
+						{
+							minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+							minionArray.push_back(minion);
+						}
 					}
 					if (minion.isSpawned[14] && boss.hp <= 2500) //spawn minion;
 					{
+						if (!playLaugh)
+						{
+							evillaugh.play();
+							playRoar = false;
+							playLaugh = true;
+						}
 						minion.isSpawned[14] = false;
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
-						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
-						minionArray.push_back(minion);
+						for (int i = 0;i < 3;i++)
+						{
+							minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+							minionArray.push_back(minion);
+						}
 					}
 				}
 				if (boss.isDead) //boss die;
 				{
-					minionArray.clear();
+					if (!playRoar)
+					{
+						roar.play();
+						playRoar = true;
+						playLaugh = false;
+					}
+					bossMusic.stop();
+
+					gargoyle1Counter = 0;
+					for (gargoyle1Iter = gargoyle1Array.begin();gargoyle1Iter != gargoyle1Array.end();gargoyle1Iter++)
+					{
+						gargoyle1Array.erase(gargoyle1Iter);
+						break;
+					}
+					gargoyle2Counter = 0;
+					for (gargoyle2Iter = gargoyle2Array.begin();gargoyle2Iter != gargoyle2Array.end();gargoyle2Iter++)
+					{
+						gargoyle2Array.erase(gargoyle2Iter);
+						break;
+					}
+					titan2Counter = 0;
+					for (titan2Iter = titan2Array.begin();titan2Iter != titan2Array.end();titan2Iter++)
+					{
+						titan2Array.erase(titan2Iter);
+						break;
+					}
+					titan1Counter = 0;
+					for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++)
+					{
+						titan1Array.erase(titan1Iter);
+						break;
+					}
+					titan2Counter = 0;
+					for (titan2Iter = titan2Array.begin();titan2Iter != titan2Array.end();titan2Iter++)
+					{
+						titan2Array.erase(titan2Iter);
+						break;
+					}
+					minionCounter = 0;
+					for (minionIter = minionArray.begin();minionIter != minionArray.end();minionIter++) minionArray[minionCounter].isDead = true;
+
 					bossPhase = IDLE;
 					if (player.body.getGlobalBounds().intersects(skull.getGlobalBounds()))
 					{
@@ -1949,7 +2230,11 @@ int main()
 						win.draw(window);
 						if (Keyboard::isKeyPressed(Keyboard::Return))
 						{
-							isRestarted = true;
+							if (!playEndMusic)
+							{
+								endMusic.play();
+								playEndMusic = true;
+							}
 							window.clear();
 							state = CREDIT;
 							isScrolled = true;
@@ -1968,6 +2253,7 @@ int main()
 					if (bossBulletArray[bossBulletCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
 					{
 						player.hurt();
+						hurt.play();
 						int damage = bossBulletArray[bossBulletCounter].damage;
 						dmgDp.text.setString("-" + to_string(damage));
 						dmgDp.text.setPosition(playerPosition);
@@ -1995,10 +2281,11 @@ int main()
 
 					if (player.body.getGlobalBounds().intersects(minionArray[minionCounter].body.getGlobalBounds()))
 					{
-						player.hurt();
 						if (elapse[1].asSeconds() >= 0.5f)
 						{
 							clock[1].restart();
+							player.hurt();
+							hurt.play();
 							int damage = minionArray[minionCounter].damage;
 							dmgDp.text.setString("-" + to_string(damage));
 							dmgDp.text.setPosition(playerPosition);
@@ -2069,6 +2356,8 @@ int main()
 							mpp.body.setPosition(minionArray[minionCounter].body.getPosition().x - 25.f, minionArray[minionCounter].body.getPosition().y);
 							mppArray.push_back(mpp);
 						}
+						dead.play();
+						playerScore += 2000;
 						minionArray.erase(minionIter);
 						break;
 					}
@@ -2080,6 +2369,7 @@ int main()
 					if (laserArray[laserCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
 					{
 						player.hurt();
+						hurt.play();
 						int damage = laserArray[laserCounter].damage;
 						dmgDp.text.setString("-" + to_string(damage));
 						dmgDp.text.setPosition(playerPosition);
@@ -2135,13 +2425,13 @@ int main()
 						wandLevel++;
 						playerMoney -= 500;
 					}
-					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && moreMaxHP.getGlobalBounds().contains(mousePos) && playerMoney >= 1000)
+					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && moreMaxHP.getGlobalBounds().contains(mousePos) && playerMoney >= 1000 && maxhp < 12000)
 					{
 						buttonState = BOUGHT;
 						maxhp += 1000;
 						playerMoney -= 1000;
 					}
-					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && moreMaxMP.getGlobalBounds().contains(mousePos) && playerMoney >= 200)
+					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && moreMaxMP.getGlobalBounds().contains(mousePos) && playerMoney >= 200 && maxmp < 2000)
 					{
 						buttonState = BOUGHT;
 						maxmp += 100;
@@ -2158,6 +2448,21 @@ int main()
 						player.direction = DOWN;
 						state = SKY;
 					}
+				}
+
+				//music;
+				if (!playStoreMusic)
+				{
+					menuMusic.stop();
+					introMusic.stop();
+					gameMusic.pause();
+					bossMusic.stop();
+					storeMusic.play();
+					playMenuMusic = false;
+					playIntroMusic = false;
+					playGameMusic = false;
+					playBossMusic = false;
+					playStoreMusic = true;
 				}
 
 				//update GUI;
@@ -2227,11 +2532,13 @@ int main()
 					//buffs;
 					if (event.type == Event::KeyPressed && event.key.code == Keyboard::Num1 && hpPotion != 0)
 					{
+						drink.play();
 						hpPotion--;
 						playerHP += 200;
 					}
 					if (event.type == Event::KeyPressed && event.key.code == Keyboard::Num2 && mpPotion != 0)
 					{
+						drink.play();
 						mpPotion--;
 						playerMP += 50;
 					}
@@ -2246,6 +2553,8 @@ int main()
 				}
 				playerMP += 0.1f * deltaTime;
 				if (playerMP <= 0) playerMP = 0;
+				if (player.run) playerEnergy -= 0.5f;
+				if (playerEnergy <= 0) playerEnergy = 0;
 
 				//bullet events;
 				if (wandLevel > 0) //player's bullets;
@@ -2254,11 +2563,29 @@ int main()
 					{
 						if (elapse[2].asSeconds() >= atkSpd)
 						{
+							shoot.play();
 							clock[2].restart();
 							bullet.body.setPosition(playerPosition);
 							bullet.direction = player.direction;
 							projectileArray.push_back(bullet);
 							if (!unlimitedManaCheat) playerMP -= 3.f;
+						}
+					}
+					if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::Space) && playerMP >= 3.f && playerEnergy >= 750) //release bullet;
+					{
+						if (elapse[10].asSeconds() >= atkSpd)
+						{
+							shoot.play();
+							clock[10].restart();
+							for (int i = -2;i <= 2;i++)
+							{
+								bullet.direction = player.direction;
+								if (bullet.direction == UP || bullet.direction == DOWN) bullet.body.setPosition(playerPosition.x + i * 20, playerPosition.y);
+								if (bullet.direction == RIGHT || bullet.direction == LEFT) bullet.body.setPosition(playerPosition.x, playerPosition.y + i * 20);
+								projectileArray.push_back(bullet);
+							}
+							if (!unlimitedManaCheat) playerMP -= 30.f;
+							playerEnergy -= 750.f;
 						}
 					}
 					bulletCounter = 0; //hit enemies;
@@ -2274,15 +2601,12 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 3.f);
+									playerEnergy += damage / 100.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(gargoyle1Array[gargoyle1Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
 									gargoyle1Array[gargoyle1Counter].hp -= damage;
-									if (gargoyle1Array[gargoyle1Counter].hp <= 0.f)
-									{
-										gargoyle1Array[gargoyle1Counter].isDead = true;
-										playerScore += 50;
-									}
+									if (gargoyle1Array[gargoyle1Counter].hp <= 0.f) gargoyle1Array[gargoyle1Counter].isDead = true;
 									gargoyle1Array[gargoyle1Counter].isAggroed = true;
 								}
 								gargoyle1Counter++;
@@ -2295,15 +2619,12 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 4.f);
+									playerEnergy += damage / 100.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(gargoyle2Array[gargoyle2Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
 									gargoyle2Array[gargoyle2Counter].hp -= damage;
-									if (gargoyle2Array[gargoyle2Counter].hp <= 0.f)
-									{
-										gargoyle2Array[gargoyle2Counter].isDead = true;
-										playerScore += 200;
-									}
+									if (gargoyle2Array[gargoyle2Counter].hp <= 0.f) gargoyle2Array[gargoyle2Counter].isDead = true;
 									gargoyle2Array[gargoyle2Counter].isAggroed = true;
 								}
 								gargoyle2Counter++;
@@ -2318,15 +2639,12 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 5.f);
+									playerEnergy += damage / 100.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(titan1Array[titan1Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
 									titan1Array[titan1Counter].hp -= damage;
-									if (titan1Array[titan1Counter].hp <= 0.f)
-									{
-										titan1Array[titan1Counter].isDead = true;
-										playerScore += 500;
-									}
+									if (titan1Array[titan1Counter].hp <= 0.f) titan1Array[titan1Counter].isDead = true;
 									titan1Array[titan1Counter].isAggroed = true;
 								}
 								titan1Counter++;
@@ -2339,15 +2657,12 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 6.f);
+									playerEnergy += damage / 100.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(titan2Array[titan2Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
 									titan2Array[titan2Counter].hp -= damage;
-									if (titan2Array[titan2Counter].hp <= 0.f)
-									{
-										titan2Array[titan2Counter].isDead = true;
-										playerScore += 1500;
-									}
+									if (titan2Array[titan2Counter].hp <= 0.f) titan2Array[titan2Counter].isDead = true;
 									titan2Array[titan2Counter].isAggroed = true;
 								}
 								titan2Counter++;
@@ -2362,15 +2677,12 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 7.f);
+									playerEnergy += damage / 100.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(minionArray[minionCounter].body.getPosition());
 									dmgArray.push_back(dmgDp);
 									minionArray[minionCounter].hp -= damage;
-									if (minionArray[minionCounter].hp <= 0.f)
-									{
-										minionArray[minionCounter].isDead = true;
-										playerScore += 3000;
-									}
+									if (minionArray[minionCounter].hp <= 0.f) minionArray[minionCounter].isDead = true;
 								}
 								minionCounter++;
 							}
@@ -2379,6 +2691,7 @@ int main()
 							{
 								projectileArray[bulletCounter].isCollided = true;
 								int damage = projectileArray[bulletCounter].damage * (wandLevel / 10.f);
+								playerEnergy += damage / 100.f;
 								dmgDp.text.setString("-" + to_string(damage));
 								dmgDp.text.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y - 300.f);
 								dmgArray.push_back(dmgDp);
@@ -2415,6 +2728,7 @@ int main()
 					if (player.body.getGlobalBounds().intersects(coinArray[coinCounter].body.getGlobalBounds())) coinArray[coinCounter].isPickedUp = true;
 					if (coinArray[coinCounter].isPickedUp)
 					{
+						getcoin.play();
 						playerMoney += entityValue;
 						moneyDp.text.setString("+$" + to_string(entityValue));
 						moneyDp.text.setPosition(coinArray[coinCounter].body.getPosition());
@@ -2632,8 +2946,22 @@ int main()
 				{
 					isPause = false;
 					isRestarted = true;
+					window.clear();
+					state = MENU;
 				}
 			}
+
+			//music;
+			menuMusic.pause();
+			introMusic.pause();
+			gameMusic.pause();
+			bossMusic.pause();
+			storeMusic.pause();
+			playMenuMusic = false;
+			playIntroMusic = false;
+			playGameMusic = false;
+			playBossMusic = false;
+			playStoreMusic = false;
 
 			//update buttons;
 			resume.update(mousePos);
@@ -2653,8 +2981,31 @@ int main()
 		if (isRestarted)
 		{
 			isRestarted = false;
-			window.clear();
-			state = MENU;
+			
+			//enemies;
+			boss.isDead = false;
+			boss.hp = 200000;
+			normalGargoyle.isSpawned[0] = true;
+			advancedGargoyle.isSpawned[0] = true;
+			normalTitan.isSpawned[0] = true;
+			advancedTitan.isSpawned[0] = true;
+			minion.isSpawned[0] = true;
+			minion.isSpawned[1] = true;
+			minion.isSpawned[2] = true;
+			minion.isSpawned[3] = true;
+			minion.isSpawned[4] = true;
+			minion.isSpawned[5] = true;
+			minion.isSpawned[6] = true;
+			minion.isSpawned[7] = true;
+			minion.isSpawned[8] = true;
+			minion.isSpawned[9] = true;
+			minion.isSpawned[10] = true;
+			minion.isSpawned[11] = true;
+			minion.isSpawned[12] = true;
+			minion.isSpawned[13] = true;
+			minion.isSpawned[13] = true;
+
+			//player stats;
 			isPlayerDead = false;
 			wandLevel = 0;
 			playerScore = 0;
@@ -2664,12 +3015,31 @@ int main()
 			hpPotion = 0;
 			mpPotion = 0;
 			key = 0;
+
+			//credits;
 			isScrolled = false;
 		}
 
 		//game over//
 		if (state == GAME_OVER)
 		{
+			//music;
+			if (!playYouDie)
+			{
+				menuMusic.stop();
+				introMusic.stop();
+				gameMusic.stop();
+				bossMusic.stop();
+				storeMusic.stop();
+				die.play();
+				playMenuMusic = false;
+				playIntroMusic = false;
+				playGameMusic = false;
+				playBossMusic = false;
+				playStoreMusic = false;
+				playYouDie = true;
+			}
+			
 			//set window event;
 			while (window.pollEvent(event))
 			{
@@ -2683,7 +3053,12 @@ int main()
 				}
 
 				//return to menu;
-				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && returnToMenu.getGlobalBounds().contains(mousePos)) isRestarted = true;
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && returnToMenu.getGlobalBounds().contains(mousePos))
+				{
+					isRestarted = true;
+					window.clear();
+					state = MENU;
+				}
 			}
 
 			//set view;
@@ -2722,7 +3097,12 @@ int main()
 				if (event.type == Event::Closed) window.close();
 
 				//to menu;
-				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && Tomenu.getGlobalBounds().contains(mousePos)) isRestarted = true;
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && Tomenu.getGlobalBounds().contains(mousePos))
+				{
+					isRestarted = true;
+					window.clear();
+					state = MENU;
+				}
 			}
 
 			Tomenu.update(mousePos);
@@ -2749,7 +3129,12 @@ int main()
 				if (event.type == Event::Closed) window.close();
 
 				//to menu;
-				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && Tomenu.getGlobalBounds().contains(mousePos)) isRestarted = true;
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && Tomenu.getGlobalBounds().contains(mousePos))
+				{
+					isRestarted = true;
+					window.clear();
+					state = MENU;
+				}
 			}
 
 			//update;
