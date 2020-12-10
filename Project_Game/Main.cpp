@@ -17,7 +17,7 @@ void showText(Vector2f , string, Font*, int, RenderWindow&);
 int main()
 {
 	//render window;
-	RenderWindow window(VideoMode(viewWidght, viewHeight), "Jack!", Style::Close | Style::Resize);
+	RenderWindow window(VideoMode(viewWidght, viewHeight), "Jack!", Style::Close | Style::Fullscreen);
 	View view(Vector2f(0.0f, 0.0f), Vector2f(viewWidght, viewHeight));
 	window.setFramerateLimit(framerateLimit);
 	Event event;
