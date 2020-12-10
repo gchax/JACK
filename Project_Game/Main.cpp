@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "stdfn.h"
 #include "player.h"
 #include "platform.h"
@@ -6,17 +7,17 @@
 #include "button.h"
 #include "textDisplay.h"
 #include "item.h"
+#include "textBox.h"
 
-
-//resizable view;
 void resizeView(const RenderWindow&, View&);
+void showText(Vector2f , string, Font*, int, RenderWindow&);
 
 
 //main;
 int main()
 {
 	//render window;
-	RenderWindow window(VideoMode(viewWidght, viewHeight), "Jack!", Style::Close | Style::Fullscreen);
+	RenderWindow window(VideoMode(viewWidght, viewHeight), "Jack!", Style::Close | Style::Resize);
 	View view(Vector2f(0.0f, 0.0f), Vector2f(viewWidght, viewHeight));
 	window.setFramerateLimit(framerateLimit);
 	Event event;
@@ -28,7 +29,7 @@ int main()
 	Vector2f windowSize(static_cast<float>(ws.x), static_cast<float>(ws.y));
 
 
-	//initialize variables;
+	//initialize variables
 	bool isPause = false;
 	bool isPlayerDead = false;
 	bool isUnlocked = false;
@@ -47,10 +48,11 @@ int main()
 	bool gravityCheat = false;
 	bool unlimitedManaCheat = false;
 	bool unlimitedHealthCheat = false;
+	bool readFile = false;
 	int state = MENU;
 	int bossPhase = STILL;
 	int buttonState = UNSELECTED;
-	int wandLevel = 60;
+	int wandLevel = 0;
 	int key = 0;
 	int playerScore = 0;
 	int playerMoney = 0;
@@ -58,12 +60,14 @@ int main()
 	int mpPotion = 0;
 	int pattern = 0;
 	int page = 1;
+	int typeLimit = 25;
 	float maxhp = maxHP;
 	float maxmp = maxMP;
 	float playerHP = maxhp;
 	float playerMP = maxmp;
 	float playerEnergy = maxEnergy;
 	float playerGravity = gravity;
+	string name;
 
 	//load from files;
 	Music menuMusic;
@@ -263,6 +267,13 @@ int main()
 
 	Texture tutorialpng;
 	tutorialpng.loadFromFile("resources/picture/tutorial.png");
+
+	Texture inp;
+	inp.loadFromFile("resources/picture/inputscreen.png");
+
+	Texture blackboard;
+	blackboard.loadFromFile("resources/picture/blackboard.png");
+
 
 	//initialize player;
 	player player(&jack, Vector2u(8, 8), 0.07f, 600.0f);
@@ -470,6 +481,10 @@ int main()
 
 	platform Tutorial(&tutorialpng, Vector2f(1500.f, 1000.f), Vector2f(windowSize.x / 2.f, windowSize.y / 2.f));
 
+	platform inputScreen(&inp, Vector2f(1500.f, 1000.f), Vector2f(windowSize.x / 2.f, windowSize.y / 2.f));
+
+	platform board(&blackboard, Vector2f(1200.f, 664.f), Vector2f(windowSize.x / 2.f, windowSize.y / 2.f));
+
 
 	//initialize warpers;
 	RectangleShape warperH;
@@ -567,7 +582,7 @@ int main()
 	int entityValue = 0;
 
 
-	//texts;
+	//texts involved;
 	textDisplay moneyDp(Color::Yellow);
 	moneyDp.text.setFont(font);
 	vector<textDisplay>::const_iterator moneyIter;
@@ -592,6 +607,27 @@ int main()
 	dmgDp.text.setFont(font);
 	vector<textDisplay>::const_iterator dmgIter;
 	vector<textDisplay> dmgArray;
+
+	textBox input(30, Color::White, &font, Vector2f(windowSize / 2.f), true, true, typeLimit);
+
+
+	//leaderboard;
+	vector<std::pair<int, string>> highScore;
+	FILE* file;
+	char temp[25];
+	std::string nameArr[6];
+	int scoreArr[6];
+	bool collectHS = false;
+	file = fopen("resources/leaderboard.txt", "r");
+	for (int i = 0;i < 5;i++) 
+	{
+		fscanf(file, "%s", temp);
+		nameArr[i] = temp;
+		fscanf(file, "%d", &scoreArr[i]);
+		highScore.push_back(make_pair(scoreArr[i], nameArr[i]));
+	}
+	sort(highScore.begin(), highScore.end());
+	fclose(file);
 
 
 	//loop;
@@ -708,7 +744,10 @@ int main()
 		button Tomenu(Vector2f(windowSize.x - 150.f, 11.f * windowSize.y / 12.f), Vector2f(300, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 			2.f, &font, 20, "Return To Menu", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 
-		if (state == CREDIT || state == SCORE || state == TUTORIAL) background.body.setFillColor(Color(150, 150, 150, 111));
+		button title(Vector2f(windowSize.x / 2.f, 4.f * windowSize.y / 14.f), Vector2f(400, 100.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 50, "LEADERBOARD", Color::White, Color::White, Color::White);
+
+		if (state == INPUT || state == CREDIT || state == SCORE || state == TUTORIAL) background.body.setFillColor(Color(150, 150, 150, 111));
 		else background.body.setFillColor(Color(255, 255, 255, 255));
 
 		//player variables;
@@ -770,8 +809,7 @@ int main()
 				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && startGame.getGlobalBounds().contains(mousePos))
 				{
 					window.clear();
-					state = INTRO;
-					page = 1;
+					state = INPUT;
 				}
 
 				//see scores;
@@ -854,16 +892,30 @@ int main()
 			while (window.pollEvent(event))
 			{
 				if (event.type == Event::Closed) window.close();
-				if (event.type == Event::TextEntered)
+				if (event.type == Event::TextEntered) input.update(event);
+				if (event.type == Event::KeyPressed && event.key.code == Keyboard::Return)
 				{
+					name = input.getInput();
+					input.setSelected(false);
 
+					window.clear();
+					state = INTRO;
 				}
 			}
 
+			//set view;
+			view.setCenter(windowSize / 2.f);
+			window.clear();
+			window.setView(view);
+
+			background.draw(window);
+			inputScreen.draw(window);
+			input.draw(window);
 		}
 
 		//the game//
-		if (!isPause && state == INTRO || !isPause && state == HOME || !isPause && state == OUTDOOR || !isPause && state == SKY || !isPause && state == CASTLE || !isPause && state == STORE)
+		if (!isPause && state == INTRO || !isPause && state == HOME || !isPause && state == OUTDOOR || 
+			!isPause && state == SKY || !isPause && state == CASTLE || !isPause && state == STORE)
 		{
 			//intro//
 			if (state == INTRO)
@@ -874,9 +926,9 @@ int main()
 					if (event.type == Event::Closed) window.close();
 
 					//page up;
-					if (event.type == sf::Event::KeyPressed)
+					if (event.type == Event::KeyPressed)
 					{
-						if (page < 4) //page up;
+						if (page < 4 && event.key.code != Keyboard::Escape) //page up;
 						{
 							turn.play();
 							page++;
@@ -2545,13 +2597,13 @@ int main()
 				}
 
 				//update player's stats
-				playerHP += 0.1f * deltaTime;
+				playerHP += 0.2f * deltaTime;
 				if (playerHP <= 0)
 				{
 					playerHP = 0;
 					isPlayerDead = true;
 				}
-				playerMP += 0.1f * deltaTime;
+				playerMP += 0.5f * deltaTime;
 				if (playerMP <= 0) playerMP = 0;
 				if (player.run) playerEnergy -= 0.5f;
 				if (playerEnergy <= 0) playerEnergy = 0;
@@ -2585,7 +2637,7 @@ int main()
 								projectileArray.push_back(bullet);
 							}
 							if (!unlimitedManaCheat) playerMP -= 30.f;
-							playerEnergy -= 750.f;
+							playerEnergy -= 500.f;
 						}
 					}
 					bulletCounter = 0; //hit enemies;
@@ -2601,7 +2653,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 3.f);
-									playerEnergy += damage / 100.f;
+									playerEnergy += damage / 50.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(gargoyle1Array[gargoyle1Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2619,7 +2671,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 4.f);
-									playerEnergy += damage / 100.f;
+									playerEnergy += damage / 50.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(gargoyle2Array[gargoyle2Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2639,7 +2691,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 5.f);
-									playerEnergy += damage / 100.f;
+									playerEnergy += damage / 50.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(titan1Array[titan1Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2657,7 +2709,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 6.f);
-									playerEnergy += damage / 100.f;
+									playerEnergy += damage / 50.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(titan2Array[titan2Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2677,7 +2729,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 7.f);
-									playerEnergy += damage / 100.f;
+									playerEnergy += damage / 50.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(minionArray[minionCounter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2691,7 +2743,7 @@ int main()
 							{
 								projectileArray[bulletCounter].isCollided = true;
 								int damage = projectileArray[bulletCounter].damage * (wandLevel / 10.f);
-								playerEnergy += damage / 100.f;
+								playerEnergy += damage / 50.f;
 								dmgDp.text.setString("-" + to_string(damage));
 								dmgDp.text.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y - 300.f);
 								dmgArray.push_back(dmgDp);
@@ -2982,6 +3034,33 @@ int main()
 		{
 			isRestarted = false;
 			
+			if (!collectHS) 
+			{
+				highScore.erase(highScore.begin(), highScore.end());
+				file = fopen("resources/leaderboard.txt", "r");
+				for (int i = 0;i < 5;i++) 
+				{
+					fscanf(file, "%s", temp);
+					nameArr[i] = temp;
+					fscanf(file, "%d", &scoreArr[i]);
+					highScore.push_back(std::make_pair(scoreArr[i], nameArr[i]));
+				}
+				if (name == "") name = "(noname)";
+				highScore.push_back(std::make_pair(playerScore, name));
+				sort(highScore.begin(), highScore.end());
+				fclose(file);
+
+				file = fopen("resources/leaderboard.txt", "w");
+				char temp[26];
+				for (int i = 5;i >= 1;i--) 
+				{
+					strcpy(temp, highScore[i].second.c_str());
+					fprintf(file, "%s %d\n", temp, highScore[i].first);
+				}
+				fclose(file);
+				collectHS = true;
+			}
+
 			//enemies;
 			boss.isDead = false;
 			boss.hp = 200000;
@@ -3018,6 +3097,9 @@ int main()
 
 			//credits;
 			isScrolled = false;
+
+			//input;
+			input.setSelected(true);
 		}
 
 		//game over//
@@ -3083,12 +3165,48 @@ int main()
 		if (state == SCORE)
 		{
 			//set window event;
-			while (window.pollEvent(event)) if (event.type == Event::Closed) window.close();
+			while (window.pollEvent(event))
+			{
+				if (event.type == Event::Closed) window.close();
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && toMenu.getGlobalBounds().contains(mousePos))
+				{ 
+					window.clear();
+					state = MENU;
+				}
+			}
+
+			Tomenu.update(mousePos);
+
+			highScore.erase(highScore.begin(), highScore.end());
+			file = fopen("resources/leaderboard.txt", "r");
+			for (int i = 0;i < 5;i++)
+			{
+				fscanf(file, "%s", temp);
+				nameArr[i] = temp;
+				fscanf(file, "%d", &scoreArr[i]);
+				highScore.push_back(make_pair(scoreArr[i], nameArr[i]));
+			}
+			sort(highScore.begin(), highScore.end());
+			fclose(file);
 
 			window.clear();
+			background.draw(window);
+			board.draw(window);
+			title.draw(window);
+			Tomenu.draw(window);
+			showText(Vector2f(windowSize.x / 2.f + 250.0f, 5.f * windowSize.y / 14.f), to_string(highScore[4].first), &font, 30, window);
+			showText(Vector2f(windowSize.x / 2.f - 350.0f, 5.f * windowSize.y / 14.f), highScore[4].second, &font, 30, window);
+			showText(Vector2f(windowSize.x / 2.f + 250.0f, 6.f * windowSize.y / 14.f), to_string(highScore[3].first), &font, 30, window);
+			showText(Vector2f(windowSize.x / 2.f - 350.0f, 6.f * windowSize.y / 14.f), highScore[3].second, &font, 30, window);
+			showText(Vector2f(windowSize.x / 2.f + 250.0f, 7.f * windowSize.y / 14.f), to_string(highScore[2].first), &font, 30, window);
+			showText(Vector2f(windowSize.x / 2.f - 350.0f, 7.f * windowSize.y / 14.f), highScore[2].second, &font, 30, window);
+			showText(Vector2f(windowSize.x / 2.f + 250.0f, 8.f * windowSize.y / 14.f), to_string(highScore[1].first), &font, 30, window);
+			showText(Vector2f(windowSize.x / 2.f - 350.0f, 8.f * windowSize.y / 14.f), highScore[1].second, &font, 30, window);
+			showText(Vector2f(windowSize.x / 2.f + 250.0f, 9.f * windowSize.y / 14.f), to_string(highScore[0].first), &font, 30, window);
+			showText(Vector2f(windowSize.x / 2.f - 350.0f, 9.f * windowSize.y / 14.f), highScore[0].second, &font, 30, window);
 		}
 
-		//tutorial;
+		//tutorial//
 		if (state == TUTORIAL)
 		{
 			//set window event;
@@ -3170,4 +3288,16 @@ void resizeView(const RenderWindow& window, View& view)
 {
 	float aspectRatio = float(window.getSize().x) / float(window.getSize().y);
 	view.setSize(viewHeight * aspectRatio, viewHeight);
+}
+
+//show texts;
+void showText(Vector2f position, string word, Font* font, int size, RenderWindow& window)
+{
+	sf::Text text;
+	text.setFont(*font);
+	text.setPosition(position);
+	text.setString(word);
+	text.setCharacterSize(size);
+	text.setOutlineColor(Color::White);
+	window.draw(text);
 }

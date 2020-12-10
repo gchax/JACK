@@ -54,7 +54,7 @@
     <ClCompile Include="textDisplay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="textbox.cpp">
+    <ClCompile Include="textBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,7 +98,7 @@
     <ClInclude Include="textDisplay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="textbox.h">
+    <ClInclude Include="textBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

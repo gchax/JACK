@@ -31,7 +31,7 @@
     <ClCompile Include="playerGUI.cpp" />
     <ClCompile Include="projectile.cpp" />
     <ClCompile Include="random.cpp" />
-    <ClCompile Include="textbox.cpp" />
+    <ClCompile Include="textBox.cpp" />
     <ClCompile Include="textDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -47,7 +47,7 @@
     <ClInclude Include="projectile.h" />
     <ClInclude Include="random.h" />
     <ClInclude Include="stdfn.h" />
-    <ClInclude Include="textbox.h" />
+    <ClInclude Include="textBox.h" />
     <ClInclude Include="textDisplay.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

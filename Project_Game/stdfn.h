@@ -10,6 +10,7 @@
 #include <fstream>
 #include <random>
 #include <string>
+#include <sstream>
 #include "random.h"
 
 using namespace std;
@@ -27,5 +28,5 @@ static float viewHeight = 1080.f;
 static unsigned int framerateLimit = 60;
 static float maxHP = 2000.f;
 static float maxMP = 1000.f;
-static float maxEnergy = 1500.f;
+static float maxEnergy = 3000.f;
 static float gravity = 3000.f;

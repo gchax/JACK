@@ -58,7 +58,7 @@ playerGUI::playerGUI(Font* font, Texture* HPP, Texture* MPP, float playerHP, flo
 	this->energyBarBase.setOutlineThickness(3);
 
 	this->energyAmount.setSize(Vector2f(barMaxWidth, 10.f));
-	this->energyAmount.setFillColor(Color::Yellow);
+	this->energyAmount.setFillColor(Color(255, 160, 122));
 	this->energyAmount.setOutlineColor(Color::Black);
 
 	this->hpP.setSize(Vector2f(60.f, 60.f));
