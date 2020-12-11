@@ -18,7 +18,7 @@ using namespace sf;
 
 enum directions { IDLE = 0, UP, DOWN, RIGHT, LEFT };
 enum states { MENU = 0, INPUT, INTRO, HOME, OUTDOOR, SKY, CASTLE, STORE, PAUSE, GAME_OVER, SCORE, TUTORIAL, CREDIT };
-enum click_states { UNSELECTED = 0, BOUGHT, BYE };
+enum click_states { UNSELECTED = 0, BOUGHT, BROKE, BYE };
 enum boss_phases { STILL = 0, AGGROVATED, PISSED, INFURIATED, MURDEROUS };
 enum button_states { BTN_IDLE = 0, BTN_HOVER, BTN_ACTIVE };
 
@@ -29,4 +29,4 @@ static unsigned int framerateLimit = 60;
 static float maxHP = 2000.f;
 static float maxMP = 1000.f;
 static float maxEnergy = 3000.f;
-static float gravity = 3000.f;
+static float gravity = 6000.f;

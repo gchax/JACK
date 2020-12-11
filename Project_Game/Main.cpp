@@ -46,17 +46,18 @@ int main()
 	bool playYouDie = false;
 	bool collisionCheat = false;
 	bool gravityCheat = false;
+	bool unlimitedEnergyCheat = false;
 	bool unlimitedManaCheat = false;
 	bool unlimitedHealthCheat = false;
 	bool readFile = false;
 	int state = MENU;
 	int bossPhase = STILL;
-	int buttonState = UNSELECTED;
-	int wandLevel = 0;
+	int clickState = UNSELECTED;
+	int wandLevel = 60;
 	int key = 0;
 	int playerScore = 0;
 	int playerMoney = 0;
-	int hpPotion = 4;
+	int hpPotion = 0;
 	int mpPotion = 0;
 	int pattern = 0;
 	int page = 1;
@@ -719,9 +720,11 @@ int main()
 		moreMaxMP.setTextOutlineThickness(1);
 		button done(Vector2f(windowSize.x / 2.f, 8.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 			1.f, &font, 35, "Done.", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-		button thxText(Vector2f(storeBox.body.getPosition().x, storeBox.body.getPosition().y + 15.f), Vector2f(4.f * windowSize.x / 5.f, 150.f), Color(186, 186, 186), Color(186, 186, 186), Color(186, 186, 186),
+		button thxText(Vector2f(storeBox.body.getPosition().x, storeBox.body.getPosition().y + 15.f), Vector2f(3.f * windowSize.x / 4.f, 150.f), Color(186, 186, 186), Color(186, 186, 186), Color(186, 186, 186),
 			2.f, &font, 55, "Anything else?", Color::Black, Color::Black, Color::Black);
-		button byeText(Vector2f(storeBox.body.getPosition().x, storeBox.body.getPosition().y + 15.f), Vector2f(4.f * windowSize.x / 5.f, 75.f), Color(186, 186, 186), Color(186, 186, 186), Color(186, 186, 186),
+		button cheap(Vector2f(storeBox.body.getPosition().x, storeBox.body.getPosition().y + 15.f), Vector2f(3.f * windowSize.x / 4.f, 150.f), Color(186, 186, 186), Color(186, 186, 186), Color(186, 186, 186),
+			2.f, &font, 55, "Not Enough Money.", Color::Black, Color::Black, Color::Black);
+		button byeText(Vector2f(storeBox.body.getPosition().x, storeBox.body.getPosition().y + 15.f), Vector2f(3.f * windowSize.x / 4.f, 75.f), Color(186, 186, 186), Color(186, 186, 186), Color(186, 186, 186),
 			2.f, &font, 45, "Gladly looking forward to seeing you again, kind sir.", Color::Black, Color::Black, Color::Black);
 		button returnToTheGame(Vector2f(storeBox.body.getPosition().x + 555.f, storeBox.body.getPosition().y + 100.f), Vector2f(windowSize.x / 2.f, 50.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 			2.f, &font, 20, "Return to the game.", Color::Black, Color(69, 69, 69, 255), Color(200, 200, 200, 255));
@@ -1753,7 +1756,7 @@ int main()
 				{
 					window.clear();
 					player.body.setPosition(windowSize / 2.f);
-					buttonState = IDLE;
+					clickState = IDLE;
 					state = STORE;
 				}
 
@@ -2459,39 +2462,61 @@ int main()
 					if (event.type == Event::Closed) window.close();
 
 					//get items;
-					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && healthPotion.getGlobalBounds().contains(mousePos) && playerMoney >= 60)
+					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && healthPotion.getGlobalBounds().contains(mousePos))
 					{
-						buttonState = BOUGHT;
-						hpPotion++;
-						playerMoney -= 60;
+						if (playerMoney >= 60)
+						{
+							clickState = BOUGHT;
+							hpPotion++;
+							playerMoney -= 60;
+						}
+						else clickState = BROKE;
 					}
-					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && manaPotion.getGlobalBounds().contains(mousePos) && playerMoney >= 25)
+					
+					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && manaPotion.getGlobalBounds().contains(mousePos))
 					{
-						buttonState = BOUGHT;
-						mpPotion++;
-						playerMoney -= 25;
+						if (playerMoney >= 25)
+						{
+							clickState = BOUGHT;
+							mpPotion++;
+							playerMoney -= 25;
+						}
+						else clickState = BROKE;
 					}
-					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && wandUpgrade.getGlobalBounds().contains(mousePos) && playerMoney >= 500)
+					
+					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && wandUpgrade.getGlobalBounds().contains(mousePos))
 					{
-						buttonState = BOUGHT;
-						wandLevel++;
-						playerMoney -= 500;
+						if (playerMoney >= 500)
+						{
+							clickState = BOUGHT;
+							wandLevel++;
+							playerMoney -= 500;
+						}
+						else clickState = BROKE;
 					}
-					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && moreMaxHP.getGlobalBounds().contains(mousePos) && playerMoney >= 1000 && maxhp < 12000)
+					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && moreMaxHP.getGlobalBounds().contains(mousePos) && maxhp < 12000)
 					{
-						buttonState = BOUGHT;
-						maxhp += 1000;
-						playerMoney -= 1000;
+						if (playerMoney >= 1000)
+						{
+							clickState = BOUGHT;
+							maxhp += 1000;
+							playerMoney -= 1000;
+						}
+						else clickState = BROKE;
 					}
-					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && moreMaxMP.getGlobalBounds().contains(mousePos) && playerMoney >= 200 && maxmp < 2000)
+					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && moreMaxMP.getGlobalBounds().contains(mousePos) && maxmp < 2000)
 					{
-						buttonState = BOUGHT;
-						maxmp += 100;
-						playerMoney -= 200;
+						if (playerMoney >= 200)
+						{
+							clickState = BOUGHT;
+							maxmp += 100;
+							playerMoney -= 200;
+						}
+						else clickState = BROKE;
 					}
 
 					//return to the game;
-					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && done.getGlobalBounds().contains(mousePos)) buttonState = BYE;
+					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && done.getGlobalBounds().contains(mousePos)) clickState = BYE;
 					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && returnToTheGame.getGlobalBounds().contains(mousePos))
 					{
 						window.clear();
@@ -2565,8 +2590,9 @@ int main()
 				gui.drawCoin(window);
 				gui.drawWandState(window);
 
-				if (buttonState == BOUGHT) thxText.draw(window);
-				if (buttonState == BYE)
+				if (clickState == BOUGHT) thxText.draw(window);
+				if (clickState == BROKE) cheap.draw(window);
+				if (clickState == BYE)
 				{
 					byeText.draw(window);
 					returnToTheGame.draw(window);
@@ -2605,7 +2631,7 @@ int main()
 				}
 				playerMP += 0.5f * deltaTime;
 				if (playerMP <= 0) playerMP = 0;
-				if (player.run) playerEnergy -= 0.5f;
+				if (player.run && !unlimitedEnergyCheat) playerEnergy -= 0.5f;
 				if (playerEnergy <= 0) playerEnergy = 0;
 
 				//bullet events;
@@ -2623,12 +2649,26 @@ int main()
 							if (!unlimitedManaCheat) playerMP -= 3.f;
 						}
 					}
-					if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::Space) && playerMP >= 3.f && playerEnergy >= 750) //release bullet;
+					if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::Space) && playerMP >= 3.f && playerEnergy >= 750) //special attack;
 					{
 						if (elapse[10].asSeconds() >= atkSpd)
 						{
 							shoot.play();
 							clock[10].restart();
+							for (int i = -1;i <= 1;i++)
+							{
+								bullet.direction = player.direction;
+								if (bullet.direction == UP || bullet.direction == DOWN) bullet.body.setPosition(playerPosition.x + i * 20, playerPosition.y + 100);
+								if (bullet.direction == RIGHT || bullet.direction == LEFT) bullet.body.setPosition(playerPosition.x + 100, playerPosition.y + i * 20);
+								projectileArray.push_back(bullet);
+							}
+							for (int i = -2;i <= 1;i++)
+							{
+								bullet.direction = player.direction;
+								if (bullet.direction == UP || bullet.direction == DOWN) bullet.body.setPosition(playerPosition.x + i * 20 + 10, playerPosition.y + 50);
+								if (bullet.direction == RIGHT || bullet.direction == LEFT) bullet.body.setPosition(playerPosition.x + 50, playerPosition.y + i * 20 + 10);
+								projectileArray.push_back(bullet);
+							}
 							for (int i = -2;i <= 2;i++)
 							{
 								bullet.direction = player.direction;
@@ -2636,8 +2676,15 @@ int main()
 								if (bullet.direction == RIGHT || bullet.direction == LEFT) bullet.body.setPosition(playerPosition.x, playerPosition.y + i * 20);
 								projectileArray.push_back(bullet);
 							}
-							if (!unlimitedManaCheat) playerMP -= 30.f;
-							playerEnergy -= 500.f;
+							for (int i = -2;i <= 1;i++)
+							{
+								bullet.direction = player.direction;
+								if (bullet.direction == UP || bullet.direction == DOWN) bullet.body.setPosition(playerPosition.x + i * 20 + 10, playerPosition.y - 50);
+								if (bullet.direction == RIGHT || bullet.direction == LEFT) bullet.body.setPosition(playerPosition.x - 50, playerPosition.y + i * 20 + 10);
+								projectileArray.push_back(bullet);
+							}
+							if (!unlimitedManaCheat) playerMP -= 50.f;
+							if (!unlimitedEnergyCheat) playerEnergy -= 2000.f;
 						}
 					}
 					bulletCounter = 0; //hit enemies;
@@ -2653,7 +2700,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 3.f);
-									playerEnergy += damage / 50.f;
+									playerEnergy += wandLevel * damage / 60.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(gargoyle1Array[gargoyle1Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2671,7 +2718,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 4.f);
-									playerEnergy += damage / 50.f;
+									playerEnergy += wandLevel * damage / 60.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(gargoyle2Array[gargoyle2Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2691,7 +2738,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 5.f);
-									playerEnergy += damage / 50.f;
+									playerEnergy += wandLevel * damage / 60.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(titan1Array[titan1Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2709,7 +2756,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 6.f);
-									playerEnergy += damage / 50.f;
+									playerEnergy += wandLevel * damage / 60.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(titan2Array[titan2Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2729,7 +2776,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 7.f);
-									playerEnergy += damage / 50.f;
+									playerEnergy += wandLevel * damage / 60.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(minionArray[minionCounter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2743,7 +2790,7 @@ int main()
 							{
 								projectileArray[bulletCounter].isCollided = true;
 								int damage = projectileArray[bulletCounter].damage * (wandLevel / 10.f);
-								playerEnergy += damage / 50.f;
+								playerEnergy += wandLevel * damage / 60.f;
 								dmgDp.text.setString("-" + to_string(damage));
 								dmgDp.text.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y - 300.f);
 								dmgArray.push_back(dmgDp);
@@ -2924,26 +2971,22 @@ int main()
 				{
 					collisionCheat = true;
 					cout << "collision cheat activated!" << endl;
-
 				}
 				if (Keyboard::isKeyPressed(Keyboard::Num1) && Keyboard::isKeyPressed(Keyboard::End))
 				{
 					collisionCheat = false;
 					cout << "collision cheat deactivated!" << endl;
 				}
-
 				if (Keyboard::isKeyPressed(Keyboard::Num2) && Keyboard::isKeyPressed(Keyboard::Home))
 				{
 					gravityCheat = true;
 					cout << "flying cheat activated!" << endl;
-
 				}
 				if (Keyboard::isKeyPressed(Keyboard::Num2) && Keyboard::isKeyPressed(Keyboard::End))
 				{
 					gravityCheat = false;
 					cout << "flying cheat cheat deactivated!" << endl;
 				}
-
 				if (Keyboard::isKeyPressed(Keyboard::Num3) && Keyboard::isKeyPressed(Keyboard::Home))
 				{
 					unlimitedHealthCheat = true;
@@ -2954,7 +2997,6 @@ int main()
 					unlimitedHealthCheat = false;
 					cout << "invincible mode deactivated!" << endl;
 				}
-
 				if (Keyboard::isKeyPressed(Keyboard::Num4) && Keyboard::isKeyPressed(Keyboard::Home))
 				{
 					unlimitedManaCheat = true;
@@ -2964,6 +3006,16 @@ int main()
 				{
 					unlimitedManaCheat = false;
 					cout << "gatling mode deactivated!" << endl;
+				}
+				if (Keyboard::isKeyPressed(Keyboard::Num5) && Keyboard::isKeyPressed(Keyboard::Home))
+				{
+					unlimitedEnergyCheat = true;
+					cout << "fit mode activated!" << endl;
+				}
+				if (Keyboard::isKeyPressed(Keyboard::Num5) && Keyboard::isKeyPressed(Keyboard::End))
+				{
+					unlimitedEnergyCheat = false;
+					cout << "fit mode deactivated!" << endl;
 				}
 
 				if (Keyboard::isKeyPressed(Keyboard::Up) && Keyboard::isKeyPressed(Keyboard::K)) key = 5;
