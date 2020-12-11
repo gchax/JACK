@@ -50,7 +50,7 @@ int main()
 	bool unlimitedManaCheat = false;
 	bool unlimitedHealthCheat = false;
 	bool readFile = false;
-	int state = MENU;
+	int state = CASTLE;
 	int bossPhase = STILL;
 	int clickState = UNSELECTED;
 	int wandLevel = 0;
@@ -2293,7 +2293,6 @@ int main()
 							window.clear();
 							state = CREDIT;
 							isScrolled = true;
-							speech.body.setPosition(windowSize.x / 2.f, windowSize.y + 380.f);
 						}
 					}
 				}
@@ -3017,6 +3016,11 @@ int main()
 					unlimitedEnergyCheat = false;
 					cout << "fit mode deactivated!" << endl;
 				}
+				if (Keyboard::isKeyPressed(Keyboard::Num6) && Keyboard::isKeyPressed(Keyboard::Home))
+				{
+					wandLevel = 60;
+					cout << "fit mode deactivated!" << endl;
+				}
 
 				if (Keyboard::isKeyPressed(Keyboard::Up) && Keyboard::isKeyPressed(Keyboard::K)) key = 5;
 				if (Keyboard::isKeyPressed(Keyboard::Down) && Keyboard::isKeyPressed(Keyboard::K)) key = 0;
@@ -3030,6 +3034,7 @@ int main()
 				if (isPlayerDead)
 				{
 					window.clear();
+					isRestarted = true;
 					state = GAME_OVER;
 				}
 			}
@@ -3301,9 +3306,9 @@ int main()
 				//to menu;
 				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && Tomenu.getGlobalBounds().contains(mousePos))
 				{
-					isRestarted = true;
 					window.clear();
 					state = MENU;
+					isRestarted = true;
 				}
 			}
 
