@@ -53,7 +53,7 @@ int main()
 	int state = MENU;
 	int bossPhase = STILL;
 	int clickState = UNSELECTED;
-	int wandLevel = 60;
+	int wandLevel = 0;
 	int key = 0;
 	int playerScore = 0;
 	int playerMoney = 0;
