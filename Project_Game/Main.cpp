@@ -50,7 +50,7 @@ int main()
 	bool unlimitedManaCheat = false;
 	bool unlimitedHealthCheat = false;
 	bool readFile = false;
-	int state = CASTLE;
+	int state = HOME;
 	int bossPhase = STILL;
 	int clickState = UNSELECTED;
 	int wandLevel = 0;
@@ -315,7 +315,7 @@ int main()
 		{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0 },
-		{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0 },
+		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0 }
 	};
 	for (int mapX = 0; mapX < 20; mapX++)
@@ -324,7 +324,7 @@ int main()
 		{
 			if (home[mapY][mapX] == 0)
 			{
-				bitmap outdoor(nullptr, Vector2f(((mapX) * 90) + 45, ((mapY) * 90) + 45), Vector2f(90.f, 90.f));
+				bitmap outdoor(nullptr, Vector2f(((mapX) * 90.f) + 45.f, ((mapY) * 90.f) + 45.f), Vector2f(90.f, 90.f));
 				blockH.push_back(outdoor);
 			}
 		}
@@ -493,8 +493,8 @@ int main()
 	warperH.setSize(Vector2f(180.f, 10.f));
 
 	RectangleShape pickUp;
-	pickUp.setPosition(Vector2f(900.f, 1440.f));
-	pickUp.setSize(Vector2f(90.f, 10.f));
+	pickUp.setPosition(Vector2f(1050.0f, 610.0f));
+	pickUp.setSize(Vector2f(90.f, 20.f));
 
 	RectangleShape warperO[2];
 	warperO[0].setPosition(Vector2f(3660.f, 4900.f));
@@ -517,7 +517,7 @@ int main()
 
 	//initialize items;
 	item wand(&awand, Vector2u(1, 1), Vector2f(120.f, 120.f));
-	wand.body.setPosition(Vector2f(945.0f, 1400.0f));
+	wand.body.setPosition(Vector2f(Vector2f(1050.0f, 610.0f)));
 
 	item coin(&coins, Vector2u(6, 1), Vector2f(60.f, 60.f));
 	vector<item>::const_iterator coinIter;
@@ -688,7 +688,7 @@ int main()
 		exitGame.setTextOutlineThickness(3);
 
 		button pickItUp(Vector2f(box.body.getPosition().x, box.body.getPosition().y + 10.f), Vector2f(windowSize.x - 200.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-			2.f, &font, 25, "PRESS 'SPACE' TO PICK UP THE ITEM.", Color::Black, Color::Black, Color::Black);
+			2.f, &font, 25, "PRESS 'ENTER' TO PICK UP THE ITEM.", Color::Black, Color::Black, Color::Black);
 
 		button toSky(Vector2f(box.body.getPosition().x, box.body.getPosition().y + 10.f), Vector2f(windowSize.x - 200.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 			2.f, &font, 25, "PRESS 'ENTER' TO GO UP TO THE SKY.", Color::Black, Color::Black, Color::Black);
@@ -900,6 +900,7 @@ int main()
 				{
 					name = input.getInput();
 					input.setSelected(false);
+					input.clear();
 
 					window.clear();
 					state = INTRO;
@@ -939,7 +940,7 @@ int main()
 						else if (page == 4 && event.key.code == Keyboard::Space) //start game;
 						{
 							window.clear();
-							player.body.setPosition(Vector2f(1125.0f, 595.0f));
+							player.body.setPosition(Vector2f(1125.0f, 580.0f));
 							player.setAnimationRow(4);
 							state = HOME;
 						}
@@ -1022,7 +1023,7 @@ int main()
 						box.draw(window);
 						pickItUp.update(mousePos);
 						pickItUp.draw(window);
-						if (Keyboard::isKeyPressed(Keyboard::Space)) wandLevel = 1;
+						if (Keyboard::isKeyPressed(Keyboard::Return)) wandLevel = 1;
 					}
 				}
 
@@ -1756,7 +1757,7 @@ int main()
 				{
 					window.clear();
 					player.body.setPosition(windowSize / 2.f);
-					clickState = IDLE;
+					clickState = UNSELECTED;
 					state = STORE;
 				}
 
@@ -2277,7 +2278,7 @@ int main()
 					minionCounter = 0;
 					for (minionIter = minionArray.begin();minionIter != minionArray.end();minionIter++) minionArray[minionCounter].isDead = true;
 
-					bossPhase = IDLE;
+					bossPhase = STILL;
 					if (player.body.getGlobalBounds().intersects(skull.getGlobalBounds()))
 					{
 						winBox.draw(window);
@@ -2648,7 +2649,7 @@ int main()
 							if (!unlimitedManaCheat) playerMP -= 3.f;
 						}
 					}
-					if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::Space) && playerMP >= 3.f && playerEnergy >= 750) //special attack;
+					if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::Space) && playerMP >= 3.f && playerEnergy >= 1000) //special attack;
 					{
 						if (elapse[10].asSeconds() >= atkSpd)
 						{
@@ -2683,7 +2684,7 @@ int main()
 								projectileArray.push_back(bullet);
 							}
 							if (!unlimitedManaCheat) playerMP -= 50.f;
-							if (!unlimitedEnergyCheat) playerEnergy -= 2000.f;
+							if (!unlimitedEnergyCheat) playerEnergy -= 1000.f;
 						}
 					}
 					bulletCounter = 0; //hit enemies;
@@ -2699,7 +2700,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 3.f);
-									playerEnergy += wandLevel * damage / 60.f;
+									playerEnergy += wandLevel * damage / 1500.f + 30.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(gargoyle1Array[gargoyle1Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2717,7 +2718,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 4.f);
-									playerEnergy += wandLevel * damage / 60.f;
+									playerEnergy += wandLevel * damage / 1500.f + 30.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(gargoyle2Array[gargoyle2Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2737,7 +2738,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 5.f);
-									playerEnergy += wandLevel * damage / 60.f;
+									playerEnergy += wandLevel * damage / 1500.f + 30.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(titan1Array[titan1Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2755,7 +2756,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 6.f);
-									playerEnergy += wandLevel * damage / 60.f;
+									playerEnergy += wandLevel * damage / 1500.f + 30.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(titan2Array[titan2Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2775,7 +2776,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 7.f);
-									playerEnergy += wandLevel * damage / 60.f;
+									playerEnergy += wandLevel * damage / 1500.f + 30.f;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(minionArray[minionCounter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2789,7 +2790,7 @@ int main()
 							{
 								projectileArray[bulletCounter].isCollided = true;
 								int damage = projectileArray[bulletCounter].damage * (wandLevel / 10.f);
-								playerEnergy += wandLevel * damage / 60.f;
+								playerEnergy += wandLevel * damage / 1500.f + 30.f;
 								dmgDp.text.setString("-" + to_string(damage));
 								dmgDp.text.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y - 300.f);
 								dmgArray.push_back(dmgDp);
@@ -3157,6 +3158,9 @@ int main()
 
 			//input;
 			input.setSelected(true);
+
+			//intro;
+			page = 1;
 		}
 
 		//game over//

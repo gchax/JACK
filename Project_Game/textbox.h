@@ -13,6 +13,7 @@ public:
 	void setSelected(bool sel);
 	void update(Event input);
 	void draw(RenderWindow& window);
+	void clear();
 	string getInput() { return text.str(); }
 
 private:

@@ -38,5 +38,5 @@ private:
 	Vector2f size;
 	Vector2f position;
 	unsigned int row = 0;
-	int bossPhase = IDLE;
+	int bossPhase = STILL;
 };
