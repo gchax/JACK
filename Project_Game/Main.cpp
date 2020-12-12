@@ -812,6 +812,7 @@ int main()
 				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && startGame.getGlobalBounds().contains(mousePos))
 				{
 					window.clear();
+					input.setSelected(true);
 					state = INPUT;
 				}
 

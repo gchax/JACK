@@ -12,7 +12,7 @@ textBox::textBox(int textSize, Color color, Font* font, Vector2f position, bool 
 	this->input.setFont(*this->font);
 	this->input.setPosition(position);
 
-	if (isSelected) input.setString("|");
+	if (isSelected) input.setString("");
 	else input.setString("");
 }
 
