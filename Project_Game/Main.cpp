@@ -50,7 +50,7 @@ int main()
 	bool unlimitedManaCheat = false;
 	bool unlimitedHealthCheat = false;
 	bool readFile = false;
-	int state = HOME;
+	int state = MENU;
 	int bossPhase = STILL;
 	int clickState = UNSELECTED;
 	int wandLevel = 0;
@@ -493,7 +493,7 @@ int main()
 	warperH.setSize(Vector2f(180.f, 10.f));
 
 	RectangleShape pickUp;
-	pickUp.setPosition(Vector2f(1050.0f, 610.0f));
+	pickUp.setPosition(Vector2f(1020.0f, 625.0f));
 	pickUp.setSize(Vector2f(90.f, 20.f));
 
 	RectangleShape warperO[2];
@@ -517,7 +517,7 @@ int main()
 
 	//initialize items;
 	item wand(&awand, Vector2u(1, 1), Vector2f(120.f, 120.f));
-	wand.body.setPosition(Vector2f(Vector2f(1050.0f, 610.0f)));
+	wand.body.setPosition(Vector2f(Vector2f(1030.0f, 600.0f)));
 
 	item coin(&coins, Vector2u(6, 1), Vector2f(60.f, 60.f));
 	vector<item>::const_iterator coinIter;
@@ -612,12 +612,12 @@ int main()
 	textBox input(30, Color::White, &font, Vector2f(windowSize / 2.f), true, true, typeLimit);
 
 
-	//leaderboard;
-	vector<std::pair<int, string>> highScore;
+	//initialize leaderboard info;
+	vector<pair<int, string>> highScore;
 	FILE* file;
-	char temp[25];
-	std::string nameArr[6];
-	int scoreArr[6];
+	char temp[25] = {};
+	string nameArr[6];
+	int scoreArr[6] = {};
 	bool collectHS = false;
 	file = fopen("resources/leaderboard.txt", "r");
 	for (int i = 0;i < 5;i++) 
@@ -710,13 +710,13 @@ int main()
 			1.f, &font, 35, "Mana Potion                                  25", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 		manaPotion.setTextOutlineThickness(1);
 		button wandUpgrade(Vector2f(windowSize.x / 2.f, 4.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-			1.f, &font, 35, "Upgrade Wand                                500", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+			1.f, &font, 35, "Upgrade Wand                                200", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 		wandUpgrade.setTextOutlineThickness(1);
 		button moreMaxHP(Vector2f(windowSize.x / 2.f, 5.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-			1.f, &font, 35, "Increase Maximun HP                              1000", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+			1.f, &font, 35, "Increase Maximun HP                                500", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 		moreMaxHP.setTextOutlineThickness(1);
 		button moreMaxMP(Vector2f(windowSize.x / 2.f, 6.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-			1.f, &font, 35, "Increase Maximun MP                                200", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+			1.f, &font, 35, "Increase Maximun MP                                100", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 		moreMaxMP.setTextOutlineThickness(1);
 		button done(Vector2f(windowSize.x / 2.f, 8.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 			1.f, &font, 35, "Done.", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
@@ -900,7 +900,6 @@ int main()
 				{
 					name = input.getInput();
 					input.setSelected(false);
-					input.clear();
 
 					window.clear();
 					state = INTRO;
@@ -940,7 +939,7 @@ int main()
 						else if (page == 4 && event.key.code == Keyboard::Space) //start game;
 						{
 							window.clear();
-							player.body.setPosition(Vector2f(1125.0f, 580.0f));
+							player.body.setPosition(Vector2f(1125.0f, 560.0f));
 							player.setAnimationRow(4);
 							state = HOME;
 						}
@@ -2486,31 +2485,31 @@ int main()
 					
 					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && wandUpgrade.getGlobalBounds().contains(mousePos))
 					{
-						if (playerMoney >= 500)
+						if (playerMoney >= 200)
 						{
 							clickState = BOUGHT;
 							wandLevel++;
-							playerMoney -= 500;
+							playerMoney -= 200;
 						}
 						else clickState = BROKE;
 					}
 					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && moreMaxHP.getGlobalBounds().contains(mousePos) && maxhp < 12000)
 					{
-						if (playerMoney >= 1000)
+						if (playerMoney >= 500)
 						{
 							clickState = BOUGHT;
 							maxhp += 1000;
-							playerMoney -= 1000;
+							playerMoney -= 500;
 						}
 						else clickState = BROKE;
 					}
 					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && moreMaxMP.getGlobalBounds().contains(mousePos) && maxmp < 2000)
 					{
-						if (playerMoney >= 200)
+						if (playerMoney >= 100)
 						{
 							clickState = BOUGHT;
 							maxmp += 100;
-							playerMoney -= 200;
+							playerMoney -= 100;
 						}
 						else clickState = BROKE;
 					}
@@ -3101,10 +3100,10 @@ int main()
 					fscanf(file, "%s", temp);
 					nameArr[i] = temp;
 					fscanf(file, "%d", &scoreArr[i]);
-					highScore.push_back(std::make_pair(scoreArr[i], nameArr[i]));
+					highScore.push_back(make_pair(scoreArr[i], nameArr[i]));
 				}
 				if (name == "") name = "(noname)";
-				highScore.push_back(std::make_pair(playerScore, name));
+				highScore.push_back(make_pair(playerScore, name));
 				sort(highScore.begin(), highScore.end());
 				fclose(file);
 
@@ -3158,6 +3157,7 @@ int main()
 
 			//input;
 			input.setSelected(true);
+			input.clear();
 
 			//intro;
 			page = 1;
