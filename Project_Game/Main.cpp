@@ -899,6 +899,7 @@ int main()
 				if (event.type == Event::TextEntered) input.update(event);
 				if (event.type == Event::KeyPressed && event.key.code == Keyboard::Return)
 				{
+					collectHS = false;
 					name = input.getInput();
 					input.setSelected(false);
 
