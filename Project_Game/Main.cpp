@@ -62,6 +62,7 @@ int main()
 	int pattern = 0;
 	int page = 1;
 	int typeLimit = 25;
+	int lifetime = 0;
 	float maxhp = maxHP;
 	float maxmp = maxMP;
 	float playerHP = maxhp;
@@ -275,9 +276,13 @@ int main()
 	Texture blackboard;
 	blackboard.loadFromFile("resources/picture/blackboard.png");
 
+	Texture jckttr;
+	jckttr.loadFromFile("resources/picture/jackTutorial.png");
+
 
 	//initialize player;
-	player player(&jack, Vector2u(8, 8), 0.07f, 600.0f);
+	player wandedJack(&jckttr, Vector2u(6, 2), 0.08f, 600.f, Vector2f(132.f, 150.0f));
+	player player(&jack, Vector2u(8, 8), 0.08f, 600.f, Vector2f(71.11f, 120.0f));
 
 
 	//declare delta time;
@@ -514,6 +519,10 @@ int main()
 	skull.setPosition(Vector2f(-600.f, 225.f));
 	skull.setSize(Vector2f(120.f, 200.f));
 
+	RectangleShape blockade;
+	blockade.setPosition(Vector2f(windowSize.x / 2.f + 500.f, windowSize.y / 2.f - 230.f));
+	blockade.setSize(Vector2f(120.f, 120.f));
+
 
 	//initialize items;
 	item wand(&awand, Vector2u(1, 1), Vector2f(120.f, 120.f));
@@ -568,10 +577,10 @@ int main()
 
 	enemy seller(&monSeller, Vector2u(2, 1), Vector2f(33.f * 16, 49.f * 16), Vector2f(windowSize.x / 2.f + 432.f, windowSize.y / 2.f - 50.f), 0.8, 0.f, 0.f, 0);
 
-	enemy minion(&minion1, Vector2u(5, 2), Vector2f(3 * 96 / 2, 3 * 64 / 2), Vector2f(generateIntRandom(120, 80), generateIntRandom(120, -100)), 0.03f, 300.f, 6000, 20);
+	enemy minion(&minion1, Vector2u(5, 2), Vector2f(3 * 96 / 2, 3 * 64 / 2), Vector2f(generateIntRandom(120, 80), generateIntRandom(120, -100)), 0.03f, 300.f, 6000, 30);
 	vector<enemy>::const_iterator minionIter;
 	vector<enemy> minionArray;
-	projectile laser(&gargoyle2Ball, 1200.f, 15.f);
+	projectile laser(&gargoyle2Ball, 1200.f, 20.f);
 	vector<projectile>::const_iterator laserIter;
 	vector<projectile> laserArray;
 
@@ -752,6 +761,9 @@ int main()
 
 		if (state == INPUT || state == CREDIT || state == SCORE || state == TUTORIAL) background.body.setFillColor(Color(150, 150, 150, 111));
 		else background.body.setFillColor(Color(255, 255, 255, 255));
+
+		if (state == TUTORIAL) player.body.setScale(2, 2);
+		else player.body.setScale(1, 1);
 
 		//player variables;
 		Vector2f playerPosition = player.body.getPosition();
@@ -1090,8 +1102,9 @@ int main()
 					coinArray[coinCounter].update(deltaTime);
 					window.draw(coinArray[coinCounter].body);
 					coinArray[coinCounter].lifetime++;
-					if (coinArray[coinCounter].lifetime >= 500)
+					if (elapse[11].asSeconds() >= 60.f)
 					{
+						clock[11].restart();
 						coinArray[coinCounter].lifetime = 0;
 						coinArray[coinCounter].destroy = true;
 					}
@@ -1103,8 +1116,9 @@ int main()
 					hppArray[hppCounter].update(deltaTime);
 					window.draw(hppArray[hppCounter].body);
 					hppArray[hppCounter].lifetime++;
-					if (hppArray[hppCounter].lifetime >= 500)
+					if (elapse[12].asSeconds() >= 60.f)
 					{
+						clock[12].restart();
 						hppArray[hppCounter].lifetime = 0;
 						hppArray[hppCounter].destroy = true;
 					}
@@ -1116,8 +1130,9 @@ int main()
 					mppArray[mppCounter].update(deltaTime);
 					window.draw(mppArray[mppCounter].body);
 					mppArray[mppCounter].lifetime++;
-					if (mppArray[mppCounter].lifetime >= 500)
+					if (elapse[13].asSeconds() >= 60.f)
 					{
+						clock[13].restart();
 						mppArray[mppCounter].lifetime = 0;
 						mppArray[mppCounter].destroy = true;
 					}
@@ -1129,8 +1144,9 @@ int main()
 					keyArray[keyCounter].update(deltaTime);
 					window.draw(keyArray[keyCounter].body);
 					keyArray[keyCounter].lifetime++;
-					if (keyArray[keyCounter].lifetime >= 1800)
+					if (elapse[14].asSeconds() >= 200.f)
 					{
+						clock[14].restart();
 						keyArray[keyCounter].lifetime = 0;
 						keyArray[keyCounter].destroy = true;
 					}
@@ -1450,8 +1466,9 @@ int main()
 					coinArray[coinCounter].update(deltaTime);
 					window.draw(coinArray[coinCounter].body);
 					coinArray[coinCounter].lifetime++;
-					if (coinArray[coinCounter].lifetime >= 500)
+					if (elapse[11].asSeconds() >= 60.f)
 					{
+						clock[11].restart();
 						coinArray[coinCounter].lifetime = 0;
 						coinArray[coinCounter].destroy = true;
 					}
@@ -1463,8 +1480,9 @@ int main()
 					hppArray[hppCounter].update(deltaTime);
 					window.draw(hppArray[hppCounter].body);
 					hppArray[hppCounter].lifetime++;
-					if (hppArray[hppCounter].lifetime >= 500)
+					if (elapse[12].asSeconds() >= 60.f)
 					{
+						clock[12].restart();
 						hppArray[hppCounter].lifetime = 0;
 						hppArray[hppCounter].destroy = true;
 					}
@@ -1476,8 +1494,9 @@ int main()
 					mppArray[mppCounter].update(deltaTime);
 					window.draw(mppArray[mppCounter].body);
 					mppArray[mppCounter].lifetime++;
-					if (mppArray[mppCounter].lifetime >= 500)
+					if (elapse[13].asSeconds() >= 60.f)
 					{
+						clock[13].restart();
 						mppArray[mppCounter].lifetime = 0;
 						mppArray[mppCounter].destroy = true;
 					}
@@ -1489,8 +1508,9 @@ int main()
 					keyArray[keyCounter].update(deltaTime);
 					window.draw(keyArray[keyCounter].body);
 					keyArray[keyCounter].lifetime++;
-					if (keyArray[keyCounter].lifetime >= 1800)
+					if (elapse[14].asSeconds() >= 200.f)
 					{
+						clock[14].restart();
 						keyArray[keyCounter].lifetime = 0;
 						keyArray[keyCounter].destroy = true;
 					}
@@ -2402,12 +2422,12 @@ int main()
 				{
 					if (minionArray[minionCounter].isDead)
 					{
-						if (chance(3) == 0)
+						if (chance(9) == 0)
 						{
 							hpp.body.setPosition(minionArray[minionCounter].body.getPosition().x + 25.f, minionArray[minionCounter].body.getPosition().y);
 							hppArray.push_back(hpp);
 						}
-						if (chance(3) == 0)
+						if (chance(4) == 0)
 						{
 							mpp.body.setPosition(minionArray[minionCounter].body.getPosition().x - 25.f, minionArray[minionCounter].body.getPosition().y);
 							mppArray.push_back(mpp);
@@ -2701,7 +2721,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 3.f);
-									playerEnergy += wandLevel * damage / 1500.f + 30.f;
+									playerEnergy += wandLevel * damage / 2500.f + 250.f * deltaTime;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(gargoyle1Array[gargoyle1Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2719,7 +2739,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 4.f);
-									playerEnergy += wandLevel * damage / 1500.f + 30.f;
+									playerEnergy += wandLevel * damage / 2500.f + 250.f * deltaTime;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(gargoyle2Array[gargoyle2Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2739,7 +2759,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 5.f);
-									playerEnergy += wandLevel * damage / 1500.f + 30.f;
+									playerEnergy += wandLevel * damage / 2500.f + 250.f * deltaTime;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(titan1Array[titan1Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2757,7 +2777,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 6.f);
-									playerEnergy += wandLevel * damage / 1500.f + 30.f;
+									playerEnergy += wandLevel * damage / 2500.f + 250.f * deltaTime;
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(titan2Array[titan2Counter].body.getPosition());
 									dmgArray.push_back(dmgDp);
@@ -2777,8 +2797,7 @@ int main()
 								{
 									projectileArray[bulletCounter].isCollided = true;
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 7.f);
-									playerEnergy += wandLevel * damage / 1500.f + 30.f;
-									dmgDp.text.setString("-" + to_string(damage));
+									playerEnergy += wandLevel * damage / 2500.f + 250.f * deltaTime;
 									dmgDp.text.setPosition(minionArray[minionCounter].body.getPosition());
 									dmgArray.push_back(dmgDp);
 									minionArray[minionCounter].hp -= damage;
@@ -2791,7 +2810,7 @@ int main()
 							{
 								projectileArray[bulletCounter].isCollided = true;
 								int damage = projectileArray[bulletCounter].damage * (wandLevel / 10.f);
-								playerEnergy += wandLevel * damage / 1500.f + 30.f;
+								playerEnergy += wandLevel * damage / 2500.f + 250.f * deltaTime;
 								dmgDp.text.setString("-" + to_string(damage));
 								dmgDp.text.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y - 300.f);
 								dmgArray.push_back(dmgDp);
@@ -3258,15 +3277,15 @@ int main()
 			title.draw(window);
 			Tomenu.draw(window);
 			showText(Vector2f(windowSize.x / 2.f + 250.0f, 5.f * windowSize.y / 14.f), to_string(highScore[4].first), &font, 30, window);
-			showText(Vector2f(windowSize.x / 2.f - 350.0f, 5.f * windowSize.y / 14.f), highScore[4].second, &font, 30, window);
+			showText(Vector2f(windowSize.x / 2.f - 400.0f, 5.f * windowSize.y / 14.f), highScore[4].second, &font, 30, window);
 			showText(Vector2f(windowSize.x / 2.f + 250.0f, 6.f * windowSize.y / 14.f), to_string(highScore[3].first), &font, 30, window);
-			showText(Vector2f(windowSize.x / 2.f - 350.0f, 6.f * windowSize.y / 14.f), highScore[3].second, &font, 30, window);
+			showText(Vector2f(windowSize.x / 2.f - 400.0f, 6.f * windowSize.y / 14.f), highScore[3].second, &font, 30, window);
 			showText(Vector2f(windowSize.x / 2.f + 250.0f, 7.f * windowSize.y / 14.f), to_string(highScore[2].first), &font, 30, window);
-			showText(Vector2f(windowSize.x / 2.f - 350.0f, 7.f * windowSize.y / 14.f), highScore[2].second, &font, 30, window);
+			showText(Vector2f(windowSize.x / 2.f - 400.0f, 7.f * windowSize.y / 14.f), highScore[2].second, &font, 30, window);
 			showText(Vector2f(windowSize.x / 2.f + 250.0f, 8.f * windowSize.y / 14.f), to_string(highScore[1].first), &font, 30, window);
-			showText(Vector2f(windowSize.x / 2.f - 350.0f, 8.f * windowSize.y / 14.f), highScore[1].second, &font, 30, window);
+			showText(Vector2f(windowSize.x / 2.f - 400.0f, 8.f * windowSize.y / 14.f), highScore[1].second, &font, 30, window);
 			showText(Vector2f(windowSize.x / 2.f + 250.0f, 9.f * windowSize.y / 14.f), to_string(highScore[0].first), &font, 30, window);
-			showText(Vector2f(windowSize.x / 2.f - 350.0f, 9.f * windowSize.y / 14.f), highScore[0].second, &font, 30, window);
+			showText(Vector2f(windowSize.x / 2.f - 400.0f, 9.f * windowSize.y / 14.f), highScore[0].second, &font, 30, window);
 		}
 
 		//tutorial//
@@ -3281,12 +3300,45 @@ int main()
 				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && Tomenu.getGlobalBounds().contains(mousePos))
 				{
 					isRestarted = true;
+					player.setAnimationRow(2);
 					window.clear();
 					state = MENU;
 				}
+				if (event.type == Event::KeyPressed && event.key.code == Keyboard::Space)
+				{
+					bullet.body.setPosition(wandedJack.body.getPosition());
+					if (elapse[9].asSeconds() >= 0.5f)
+					{
+						clock[9].restart();
+						projectileArray.push_back(bullet);
+					}
+				}
 			}
 
+			//update;
 			Tomenu.update(mousePos);
+			player.updateTutorial1(deltaTime);
+			wandedJack.updateTutorial2(deltaTime);
+			player.body.setPosition(windowSize.x / 2.f - 490.f, windowSize.y / 2.f - 110.f);
+			wandedJack.body.setPosition(windowSize.x / 2.f + 35.f, windowSize.y / 2.f - 230.f);
+
+			bulletCounter = 0;
+			for (bulletIter = projectileArray.begin(); bulletIter != projectileArray.end();bulletIter++)
+			{
+				if (projectileArray[bulletCounter].body.getGlobalBounds().intersects(blockade.getGlobalBounds())) projectileArray[bulletCounter].isCollided = true;
+				bulletCounter++;
+			}
+
+			bulletCounter = 0;
+			for (bulletIter = projectileArray.begin(); bulletIter != projectileArray.end();bulletIter++)
+			{
+				if (projectileArray[bulletCounter].isCollided)
+				{
+					projectileArray.erase(bulletIter);
+					break;
+				}
+				bulletCounter++;
+			}
 
 			//set view;
 			view.setCenter(windowSize / 2.f);
@@ -3295,10 +3347,21 @@ int main()
 			window.clear();
 			window.setView(view);
 
+			bulletCounter = 0;
+			for (bulletIter = projectileArray.begin(); bulletIter != projectileArray.end();bulletIter++)
+			{
+				projectileArray[bulletCounter].direction = RIGHT;
+				projectileArray[bulletCounter].update(deltaTime);
+				window.draw(projectileArray[bulletCounter].body);
+				bulletCounter++;
+			}
+
 			//draw;
 			background.draw(window);
 			Tutorial.draw(window);
 			Tomenu.draw(window);
+			player.draw(window);
+			wandedJack.draw(window);
 		}
 
 		//credit//

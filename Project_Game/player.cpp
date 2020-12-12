@@ -1,12 +1,13 @@
 #include "player.h"
 
-player::player(Texture* texture, Vector2u imageCount, float switchTime, float speed) :
+player::player(Texture* texture, Vector2u imageCount, float switchTime, float speed, Vector2f size) :
 	animation(texture, imageCount, switchTime)
 {
 	this->speed = speed;
-	row = 4;
+	this->size = size;
+	row = 2;
 
-	body.setSize(Vector2f(71.11f, 120.0f));
+	body.setSize(size);
 	body.setOrigin(body.getSize() / 2.f);
 	body.setTexture(texture);
 }
@@ -149,6 +150,26 @@ void player::updateBossFight(float deltaTime)
 	animation.update(row, deltaTime);
 	body.setTextureRect(animation.uvRect);
 	body.move(velocity * deltaTime);
+}
+
+void player::updateTutorial1(float deltaTime)
+{
+	if (Keyboard::isKeyPressed(Keyboard::W)) row = 1;
+	if (Keyboard::isKeyPressed(Keyboard::S)) row = 3;
+	if (Keyboard::isKeyPressed(Keyboard::A)) row = 5;
+	if (Keyboard::isKeyPressed(Keyboard::D)) row = 7;
+
+	animation.update(row, deltaTime);
+	body.setTextureRect(animation.uvRect);
+}
+
+void player::updateTutorial2(float deltaTime)
+{
+	if (Keyboard::isKeyPressed(Keyboard::Space)) row = 1;
+	else row = 0;
+
+	animation.update(row, deltaTime);
+	body.setTextureRect(animation.uvRect);
 }
 
 void player::hurt()
