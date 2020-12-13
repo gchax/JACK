@@ -3310,15 +3310,6 @@ int main()
 					window.clear();
 					state = MENU;
 				}
-				if (event.type == Event::KeyPressed && event.key.code == Keyboard::Space)
-				{
-					bullet.body.setPosition(wandedJack.body.getPosition());
-					if (elapse[9].asSeconds() >= 0.5f)
-					{
-						clock[9].restart();
-						projectileArray.push_back(bullet);
-					}
-				}
 			}
 
 			//update;
@@ -3327,6 +3318,16 @@ int main()
 			wandedJack.updateTutorial2(deltaTime);
 			player.body.setPosition(windowSize.x / 2.f - 490.f, windowSize.y / 2.f - 110.f);
 			wandedJack.body.setPosition(windowSize.x / 2.f + 35.f, windowSize.y / 2.f - 230.f);
+
+			if (Keyboard::isKeyPressed(Keyboard::Space))
+			{
+				bullet.body.setPosition(wandedJack.body.getPosition());
+				if (elapse[9].asSeconds() >= 0.5f)
+				{
+					clock[9].restart();
+					projectileArray.push_back(bullet);
+				}
+			}
 
 			bulletCounter = 0;
 			for (bulletIter = projectileArray.begin(); bulletIter != projectileArray.end();bulletIter++)
