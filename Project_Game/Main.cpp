@@ -3139,6 +3139,12 @@ int main()
 				collectHS = true;
 			}
 
+			//items
+			coinArray.clear();
+			hppArray.clear();
+			mppArray.clear();
+			keyArray.clear();
+
 			//enemies;
 			boss.isDead = false;
 			boss.hp = 200000;
