@@ -3144,6 +3144,7 @@ int main()
 			hppArray.clear();
 			mppArray.clear();
 			keyArray.clear();
+			projectileArray.clear();
 
 			//enemies;
 			boss.isDead = false;

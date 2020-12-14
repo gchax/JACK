@@ -154,6 +154,8 @@ void player::updateBossFight(float deltaTime)
 
 void player::updateTutorial1(float deltaTime)
 {
+	body.setFillColor(Color(255, 255, 255, 255));
+
 	if (Keyboard::isKeyPressed(Keyboard::W)) row = 1;
 	if (Keyboard::isKeyPressed(Keyboard::S)) row = 3;
 	if (Keyboard::isKeyPressed(Keyboard::A)) row = 5;
