@@ -3145,6 +3145,10 @@ int main()
 			mppArray.clear();
 			keyArray.clear();
 			projectileArray.clear();
+			gargoyle1BulletArray.clear();
+			gargoyle2BulletArray.clear();
+			titan2BulletArray.clear();
+			laserArray.clear();
 
 			//enemies;
 			boss.isDead = false;
@@ -3167,7 +3171,17 @@ int main()
 			minion.isSpawned[11] = true;
 			minion.isSpawned[12] = true;
 			minion.isSpawned[13] = true;
-			minion.isSpawned[13] = true;
+			minion.isSpawned[14] = true;
+			gargoyle1Counter = 0;
+			for (gargoyle1Iter = gargoyle1Array.begin();gargoyle1Iter != gargoyle1Array.end();gargoyle1Iter++) gargoyle1Array[gargoyle1Counter].isAggroed = false;
+			gargoyle2Counter = 0;
+			for (gargoyle2Iter = gargoyle2Array.begin();gargoyle2Iter != gargoyle2Array.end();gargoyle2Iter++) gargoyle2Array[gargoyle2Counter].isAggroed = false;
+			titan1Counter = 0;
+			for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++) titan1Array[titan1Counter].isAggroed = false;
+			titan2Counter = 0;
+			for (titan2Iter = titan2Array.begin();titan2Iter != titan2Array.end();titan2Iter++) titan2Array[titan2Counter].isAggroed = false;
+			minionCounter = 0;
+			for (minionIter = minionArray.begin();minionIter != minionArray.end();minionIter++) minionArray[minionCounter].isAggroed = false;
 
 			//player stats;
 			isPlayerDead = false;
@@ -3176,6 +3190,7 @@ int main()
 			playerMoney = 0;
 			playerHP = maxHP;
 			playerMP = maxMP;
+			playerEnergy = maxEnergy;
 			hpPotion = 0;
 			mpPotion = 0;
 			key = 0;
