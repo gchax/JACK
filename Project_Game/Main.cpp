@@ -10,7 +10,7 @@
 #include "textBox.h"
 
 void resizeView(const RenderWindow&, View&);
-void showText(Vector2f , string, Font*, int, RenderWindow&);
+void showText(Vector2f, string, Font*, int, RenderWindow&);
 
 
 //main;
@@ -24,12 +24,18 @@ int main()
 	srand(time(NULL));
 
 
+	//icon;
+	Image icon;
+	icon.loadFromFile("resources/icon.png");
+	window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+
+
 	//define screen size;
 	Vector2u ws = window.getSize();
 	Vector2f windowSize(static_cast<float>(ws.x), static_cast<float>(ws.y));
 
 
-	//initialize variables
+	//initialize variables;
 	bool isPause = false;
 	bool isPlayerDead = false;
 	bool isUnlocked = false;
@@ -118,7 +124,7 @@ int main()
 	Sound shoot;
 	shoot.setBuffer(fire);
 	shoot.setVolume(10);
-	
+
 	SoundBuffer mcoin;
 	mcoin.loadFromFile("resources/audio/coin.wav");
 	Sound getcoin;
@@ -629,7 +635,7 @@ int main()
 	int scoreArr[6] = {};
 	bool collectHS = false;
 	file = fopen("resources/leaderboard.txt", "r");
-	for (int i = 0;i < 5;i++) 
+	for (int i = 0;i < 5;i++)
 	{
 		fscanf(file, "%s", temp);
 		nameArr[i] = temp;
@@ -650,7 +656,7 @@ int main()
 		//initialize time variables;
 		Time elapse[15];
 		elapse[0] = clock[0].getElapsedTime();
-		elapse[1] = clock[1].getElapsedTime(); 
+		elapse[1] = clock[1].getElapsedTime();
 		elapse[2] = clock[2].getElapsedTime();
 		elapse[3] = clock[3].getElapsedTime();
 		elapse[4] = clock[4].getElapsedTime();
@@ -931,7 +937,7 @@ int main()
 		}
 
 		//the game//
-		if (!isPause && state == INTRO || !isPause && state == HOME || !isPause && state == OUTDOOR || 
+		if (!isPause && state == INTRO || !isPause && state == HOME || !isPause && state == OUTDOOR ||
 			!isPause && state == SKY || !isPause && state == CASTLE || !isPause && state == STORE)
 		{
 			//intro//
@@ -2493,7 +2499,7 @@ int main()
 						}
 						else clickState = BROKE;
 					}
-					
+
 					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && manaPotion.getGlobalBounds().contains(mousePos))
 					{
 						if (playerMoney >= 25)
@@ -2504,7 +2510,7 @@ int main()
 						}
 						else clickState = BROKE;
 					}
-					
+
 					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && wandUpgrade.getGlobalBounds().contains(mousePos))
 					{
 						if (playerMoney >= 200)
@@ -3111,12 +3117,12 @@ int main()
 		if (isRestarted)
 		{
 			isRestarted = false;
-			
-			if (!collectHS) 
+
+			if (!collectHS)
 			{
 				highScore.erase(highScore.begin(), highScore.end());
 				file = fopen("resources/leaderboard.txt", "r");
-				for (int i = 0;i < 5;i++) 
+				for (int i = 0;i < 5;i++)
 				{
 					fscanf(file, "%s", temp);
 					nameArr[i] = temp;
@@ -3130,7 +3136,7 @@ int main()
 
 				file = fopen("resources/leaderboard.txt", "w");
 				char temp[26];
-				for (int i = 5;i >= 1;i--) 
+				for (int i = 5;i >= 1;i--)
 				{
 					strcpy(temp, highScore[i].second.c_str());
 					fprintf(file, "%s %d\n", temp, highScore[i].first);
@@ -3144,11 +3150,6 @@ int main()
 			hppArray.clear();
 			mppArray.clear();
 			keyArray.clear();
-			projectileArray.clear();
-			gargoyle1BulletArray.clear();
-			gargoyle2BulletArray.clear();
-			titan2BulletArray.clear();
-			laserArray.clear();
 
 			//enemies;
 			boss.isDead = false;
@@ -3171,17 +3172,7 @@ int main()
 			minion.isSpawned[11] = true;
 			minion.isSpawned[12] = true;
 			minion.isSpawned[13] = true;
-			minion.isSpawned[14] = true;
-			gargoyle1Counter = 0;
-			for (gargoyle1Iter = gargoyle1Array.begin();gargoyle1Iter != gargoyle1Array.end();gargoyle1Iter++) gargoyle1Array[gargoyle1Counter].isAggroed = false;
-			gargoyle2Counter = 0;
-			for (gargoyle2Iter = gargoyle2Array.begin();gargoyle2Iter != gargoyle2Array.end();gargoyle2Iter++) gargoyle2Array[gargoyle2Counter].isAggroed = false;
-			titan1Counter = 0;
-			for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++) titan1Array[titan1Counter].isAggroed = false;
-			titan2Counter = 0;
-			for (titan2Iter = titan2Array.begin();titan2Iter != titan2Array.end();titan2Iter++) titan2Array[titan2Counter].isAggroed = false;
-			minionCounter = 0;
-			for (minionIter = minionArray.begin();minionIter != minionArray.end();minionIter++) minionArray[minionCounter].isAggroed = false;
+			minion.isSpawned[13] = true;
 
 			//player stats;
 			isPlayerDead = false;
@@ -3190,7 +3181,6 @@ int main()
 			playerMoney = 0;
 			playerHP = maxHP;
 			playerMP = maxMP;
-			playerEnergy = maxEnergy;
 			hpPotion = 0;
 			mpPotion = 0;
 			key = 0;
@@ -3225,7 +3215,7 @@ int main()
 				playStoreMusic = false;
 				playYouDie = true;
 			}
-			
+
 			//set window event;
 			while (window.pollEvent(event))
 			{
@@ -3273,7 +3263,7 @@ int main()
 			{
 				if (event.type == Event::Closed) window.close();
 				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && toMenu.getGlobalBounds().contains(mousePos))
-				{ 
+				{
 					window.clear();
 					state = MENU;
 				}
@@ -3326,6 +3316,15 @@ int main()
 					window.clear();
 					state = MENU;
 				}
+				if (event.type == Event::KeyPressed && event.key.code == Keyboard::Space)
+				{
+					bullet.body.setPosition(wandedJack.body.getPosition());
+					if (elapse[9].asSeconds() >= 0.5f)
+					{
+						clock[9].restart();
+						projectileArray.push_back(bullet);
+					}
+				}
 			}
 
 			//update;
@@ -3334,16 +3333,6 @@ int main()
 			wandedJack.updateTutorial2(deltaTime);
 			player.body.setPosition(windowSize.x / 2.f - 490.f, windowSize.y / 2.f - 110.f);
 			wandedJack.body.setPosition(windowSize.x / 2.f + 35.f, windowSize.y / 2.f - 230.f);
-
-			if (Keyboard::isKeyPressed(Keyboard::Space))
-			{
-				bullet.body.setPosition(wandedJack.body.getPosition());
-				if (elapse[9].asSeconds() >= 0.5f)
-				{
-					clock[9].restart();
-					projectileArray.push_back(bullet);
-				}
-			}
 
 			bulletCounter = 0;
 			for (bulletIter = projectileArray.begin(); bulletIter != projectileArray.end();bulletIter++)
